@@ -1,19 +1,20 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 
 import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  getFirestore,
+  doc,
+  getDoc
+}
+from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 
-// ===============================
-// FIREBASE CONFIG
-// ===============================
+/* =========================
+   FIREBASE CONFIG
+========================= */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBCx_8R-fGh9Ci4M-0Fk57dQnRfXe74YSY",
+  apiKey: "AIzaSyBCx8R-fGh9Ci4M-0Fk57dQnRfXe74YSY",
   authDomain: "primehub-12dde.firebaseapp.com",
   projectId: "primehub-12dde",
   storageBucket: "primehub-12dde.firebasestorage.app",
@@ -22,16 +23,23 @@ const firebaseConfig = {
   measurementId: "G-878ZB4S1LP"
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
+
+/* =========================
+   INITIALIZE FIREBASE
+========================= */
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 
-// ===============================
-// WEBSITE DATA
-// ===============================
+/* =========================
+   DEFAULT DATA
+========================= */
 
 const defaultData = {
-  about: "This section can be changed from the Admin panel.",
+
+  about:
+    "Welcome to PrimeHub — my personal and business digital space.",
 
   services: [
     {
@@ -44,22 +52,22 @@ const defaultData = {
     },
     {
       title: "Business",
-      text: "A space for your services and future business."
+      text: "A space for services and future business ideas."
     }
   ],
 
   content: [
     {
       title: "Notes & PDFs",
-      text: "Add useful documents and resources."
+      text: "Useful documents and resources."
     },
     {
       title: "Photos",
-      text: "Showcase your images and projects."
+      text: "Showcase images and projects."
     },
     {
       title: "Updates",
-      text: "Publish new work, ideas and announcements."
+      text: "New work, ideas and announcements."
     }
   ],
 
@@ -68,22 +76,52 @@ const defaultData = {
     instagram: "@yourusername",
     phone: "+91 XXXXX XXXXX"
   }
+
 };
 
 
-// ===============================
-// GET DATA
-// ===============================
+/* =========================
+   ESCAPE HTML
+========================= */
 
-function getData() {
+function esc(value) {
+
+  return String(value ?? "").replace(/[&<>"']/g, m => ({
+
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+
+  }[m]));
+
+}
+
+
+/* =========================
+   LOAD FIREBASE DATA
+========================= */
+
+async function getData() {
 
   try {
 
-    return JSON.parse(
-      localStorage.getItem("yashSiteData")
-    ) || defaultData;
+    const ref = doc(db, "siteData", "main");
+
+    const snapshot = await getDoc(ref);
+
+    if (snapshot.exists()) {
+
+      return snapshot.data();
+
+    }
+
+    return defaultData;
 
   } catch (error) {
+
+    console.error("Firebase error:", error);
 
     return defaultData;
 
@@ -92,126 +130,144 @@ function getData() {
 }
 
 
-// ===============================
-// ESCAPE HTML
-// ===============================
+/* =========================
+   RENDER WEBSITE
+========================= */
 
-function esc(value) {
+async function render() {
 
-  return String(value).replace(
-    /[&<>"']/g,
-    function (m) {
-
-      return {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-
-      }[m];
-
-    }
-  );
-
-}
+  const data = await getData();
 
 
-// ===============================
-// RENDER WEBSITE
-// ===============================
+  /* ABOUT */
 
-function render() {
+  const aboutText =
+    document.getElementById("aboutText");
 
-  const d = getData();
+  if (aboutText) {
 
-  const about = document.getElementById("aboutText");
+    aboutText.textContent =
+      data.about || defaultData.about;
 
-  if (about) {
-    about.textContent = d.about;
   }
 
 
-  const services = document.getElementById("servicesGrid");
+  /* SERVICES */
 
-  if (services) {
+  const servicesGrid =
+    document.getElementById("servicesGrid");
 
-    services.innerHTML = d.services.map(function (x) {
+  if (servicesGrid) {
 
-      return `
+    const services =
+      Array.isArray(data.services)
+        ? data.services
+        : defaultData.services;
+
+    servicesGrid.innerHTML =
+      services.map(item => `
+
         <article class="card">
-          <h3>${esc(x.title)}</h3>
-          <p>${esc(x.text)}</p>
-        </article>
-      `;
 
-    }).join("");
+          <h3>
+            ${esc(item.title)}
+          </h3>
+
+          <p>
+            ${esc(item.text)}
+          </p>
+
+        </article>
+
+      `).join("");
 
   }
 
 
-  const content = document.getElementById("contentGrid");
+  /* CONTENT */
 
-  if (content) {
+  const contentGrid =
+    document.getElementById("contentGrid");
 
-    content.innerHTML = d.content.map(function (x) {
+  if (contentGrid) {
 
-      return `
+    const content =
+      Array.isArray(data.content)
+        ? data.content
+        : defaultData.content;
+
+    contentGrid.innerHTML =
+      content.map(item => `
+
         <article class="card">
-          <h3>${esc(x.title)}</h3>
-          <p>${esc(x.text)}</p>
-        </article>
-      `;
 
-    }).join("");
+          <h3>
+            ${esc(item.title)}
+          </h3>
+
+          <p>
+            ${esc(item.text)}
+          </p>
+
+        </article>
+
+      `).join("");
 
   }
 
 
-  const contact = document.getElementById("contactCard");
+  /* CONTACT */
 
-  if (contact) {
+  const contactCard =
+    document.getElementById("contactCard");
 
-    contact.innerHTML = `
+  if (contactCard) {
+
+    const contact =
+      data.contact || defaultData.contact;
+
+
+    contactCard.innerHTML = `
+
       <p>
         <b>Email:</b>
-        <a href="mailto:${esc(d.contact.email)}">
-          ${esc(d.contact.email)}
+        <a href="mailto:${esc(contact.email)}">
+          ${esc(contact.email)}
         </a>
       </p>
 
       <p>
         <b>Instagram:</b>
-        ${esc(d.contact.instagram)}
+        ${esc(contact.instagram)}
       </p>
 
       <p>
         <b>Phone:</b>
-        ${esc(d.contact.phone)}
+        ${esc(contact.phone)}
       </p>
+
     `;
 
   }
 
 
-  const year = document.getElementById("year");
+  /* YEAR */
+
+  const year =
+    document.getElementById("year");
 
   if (year) {
-    year.textContent = new Date().getFullYear();
+
+    year.textContent =
+      new Date().getFullYear();
+
   }
 
 }
 
 
-// ===============================
-// START
-// ===============================
+/* =========================
+   START
+========================= */
 
 render();
-
-
-// Make Firebase available if needed
-window.primehubAuth = auth;
-window.primehubSignIn = signInWithEmailAndPassword;
-window.primehubSignOut = signOut;
-window.primehubAuthState = onAuthStateChanged;
