@@ -1,18 +1,831 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin — Yash</title><link rel="stylesheet" href="style.css"><style>.panel{max-width:1000px;margin:auto;padding:60px 7%}.box{background:#12151c;border:1px solid #252a34;border-radius:18px;padding:22px;margin:18px 0}input,textarea{width:100%;margin:7px 0 14px;padding:12px;border-radius:10px;border:1px solid #303642;background:#0b0d12;color:#fff}button{border:0;border-radius:10px;padding:11px 16px;background:#7c5cff;color:#fff;font-weight:700;cursor:pointer}.row{display:grid;grid-template-columns:1fr 1fr;gap:15px}.item{border:1px solid #292e38;padding:15px;border-radius:12px;margin:10px 0}.danger{background:#a33}@media(max-width:700px){.row{grid-template-columns:1fr}}</style></head><body><header class="nav"><a class="brand" href="index.html">YASH<span>.</span></a><nav><a href="index.html">View Website</a></nav></header><main class="panel"><p class="eyebrow">ADMIN PANEL — DEMO</p><h1>Manage your website</h1><p class="muted">This first version saves changes in this browser. For true anywhere-access admin, connect a free database/storage service in the next step.</p>
-<div class="box"><h2>About</h2><textarea id="about" rows="4"></textarea></div>
-<div class="box"><h2>Services</h2><div id="services"></div><button onclick="addService()">+ Add service</button></div>
-<div class="box"><h2>Content</h2><div id="content"></div><button onclick="addContent()">+ Add content</button></div>
-<div class="box"><h2>Contact</h2><div class="row"><label>Email<input id="email"></label><label>Instagram<input id="instagram"></label></div><label>Phone<input id="phone"></label></div>
-<button onclick="save()">Save changes</button> <button class="danger" onclick="resetData()">Reset demo</button>
-</main><script>
-const base={about:"This section can be changed from the Admin panel.",services:[{title:"Video Editing",text:"Professional short-form and video editing."},{title:"Creative Work",text:"Design, content and digital projects."},{title:"Business",text:"A space for your services and future business."}],content:[{title:"Notes & PDFs",text:"Add useful documents and resources."},{title:"Photos",text:"Showcase your images and projects."},{title:"Updates",text:"Publish new work, ideas and announcements."}],contact:{email:"your@email.com",instagram:"@yourusername",phone:"+91 XXXXX XXXXX"}};
-let d=JSON.parse(localStorage.getItem("yashSiteData")||"null")||base;
-function input(v){return String(v).replace(/"/g,"&quot;")}
-function render(){about.value=d.about;email.value=d.contact.email;instagram.value=d.contact.instagram;phone.value=d.contact.phone;services.innerHTML=d.services.map((x,i)=>`<div class="item"><input value="${input(x.title)}" data-s="t" data-i="${i}"><textarea data-s="p" data-i="${i}">${x.text}</textarea><button class="danger" onclick="del('services',${i})">Delete</button></div>`).join("");content.innerHTML=d.content.map((x,i)=>`<div class="item"><input value="${input(x.title)}" data-c="t" data-i="${i}"><textarea data-c="p" data-i="${i}">${x.text}</textarea><button class="danger" onclick="del('content',${i})">Delete</button></div>`).join("")}
-function collect(){d.about=about.value;d.contact={email:email.value,instagram:instagram.value,phone:phone.value};document.querySelectorAll("[data-s]").forEach(e=>{let i=e.dataset.i;if(e.dataset.s==="t")d.services[i].title=e.value;else d.services[i].text=e.value});document.querySelectorAll("[data-c]").forEach(e=>{let i=e.dataset.i;if(e.dataset.c==="t")d.content[i].title=e.value;else d.content[i].text=e.value})}
-function save(){collect();localStorage.setItem("yashSiteData",JSON.stringify(d));alert("Saved on this browser.")}
-function addService(){collect();d.services.push({title:"New service",text:"Describe this service."});render()}
-function addContent(){collect();d.content.push({title:"New content",text:"Describe your content."});render()}
-function del(k,i){collect();d[k].splice(i,1);render()}
-function resetData(){localStorage.removeItem("yashSiteData");location.reload()}render();
-</script></body></html>
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
+<title>PrimeHub — Admin</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+.admin-wrap{
+  max-width:1000px;
+  margin:auto;
+  padding:60px 7%;
+}
+
+.admin-box{
+  background:#12151c;
+  border:1px solid #252a34;
+  border-radius:18px;
+  padding:25px;
+  margin:20px 0;
+}
+
+.admin-input{
+  width:100%;
+  margin:8px 0 15px;
+  padding:13px;
+  border-radius:10px;
+  border:1px solid #303642;
+  background:#0b0d12;
+  color:#fff;
+  box-sizing:border-box;
+}
+
+.admin-btn{
+  border:0;
+  border-radius:10px;
+  padding:12px 18px;
+  background:#7c5cff;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.logout-btn{
+  background:#a33;
+}
+
+.error{
+  color:#ff7777;
+  margin-top:12px;
+}
+
+.success{
+  color:#62e6a8;
+  margin-top:12px;
+}
+
+.hidden{
+  display:none;
+}
+
+.item{
+  border:1px solid #292e38;
+  padding:15px;
+  border-radius:12px;
+  margin:10px 0;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="nav">
+
+  <a class="brand" href="index.html">
+    YASH<span>.</span>
+  </a>
+
+  <nav>
+    <a href="index.html">View Website</a>
+  </nav>
+
+</header>
+
+
+
+<main class="admin-wrap">
+
+
+<!-- ================= LOGIN ================= -->
+
+<section id="loginBox" class="admin-box">
+
+  <p class="eyebrow">
+    PRIMEHUB ADMIN
+  </p>
+
+  <h1>Admin Login</h1>
+
+  <p class="muted">
+    Login with your authorized Firebase account.
+  </p>
+
+
+  <label>
+    Email
+
+    <input
+      id="loginEmail"
+      class="admin-input"
+      type="email"
+      placeholder="Admin email"
+    >
+
+  </label>
+
+
+  <label>
+    Password
+
+    <input
+      id="loginPassword"
+      class="admin-input"
+      type="password"
+      placeholder="Password"
+    >
+
+  </label>
+
+
+  <button
+    class="admin-btn"
+    id="loginBtn"
+  >
+    Login
+  </button>
+
+
+  <p id="loginError" class="error"></p>
+
+</section>
+
+
+
+<!-- ================= ADMIN PANEL ================= -->
+
+<section
+  id="adminPanel"
+  class="hidden"
+>
+
+
+  <div class="admin-box">
+
+    <p class="eyebrow">
+      ADMIN PANEL
+    </p>
+
+    <h1>Manage PrimeHub</h1>
+
+    <p class="muted">
+      You are logged in as admin.
+    </p>
+
+    <button
+      class="admin-btn logout-btn"
+      id="logoutBtn"
+    >
+      Logout
+    </button>
+
+  </div>
+
+
+
+  <!-- ABOUT -->
+
+  <div class="admin-box">
+
+    <h2>About</h2>
+
+    <textarea
+      id="about"
+      class="admin-input"
+      rows="5"
+    ></textarea>
+
+  </div>
+
+
+
+  <!-- SERVICES -->
+
+  <div class="admin-box">
+
+    <h2>Services</h2>
+
+    <div id="services"></div>
+
+    <button
+      class="admin-btn"
+      id="addServiceBtn"
+    >
+      + Add Service
+    </button>
+
+  </div>
+
+
+
+  <!-- CONTENT -->
+
+  <div class="admin-box">
+
+    <h2>Content</h2>
+
+    <div id="content"></div>
+
+    <button
+      class="admin-btn"
+      id="addContentBtn"
+    >
+      + Add Content
+    </button>
+
+  </div>
+
+
+
+  <!-- CONTACT -->
+
+  <div class="admin-box">
+
+    <h2>Contact</h2>
+
+    <input
+      id="email"
+      class="admin-input"
+      placeholder="Email"
+    >
+
+    <input
+      id="instagram"
+      class="admin-input"
+      placeholder="Instagram"
+    >
+
+    <input
+      id="phone"
+      class="admin-input"
+      placeholder="Phone"
+    >
+
+  </div>
+
+
+
+  <button
+    class="admin-btn"
+    id="saveBtn"
+  >
+    Save Changes
+  </button>
+
+
+  <p
+    id="saveMessage"
+    class="success"
+  ></p>
+
+
+</section>
+
+
+</main>
+
+
+
+<script type="module">
+
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+}
+from
+"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+
+// ===============================
+// FIREBASE
+// ===============================
+
+const firebaseConfig = {
+
+  apiKey:
+  "AIzaSyBCx_8R-fGh9Ci4M-0Fk57dQnRfXe74YSY",
+
+  authDomain:
+  "primehub-12dde.firebaseapp.com",
+
+  projectId:
+  "primehub-12dde",
+
+  storageBucket:
+  "primehub-12dde.firebasestorage.app",
+
+  messagingSenderId:
+  "1081645394839",
+
+  appId:
+  "1:1081645394839:web:796cc1c3de6d1ce201b2d2",
+
+  measurementId:
+  "G-878ZB4S1LP"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+
+// ===============================
+// ELEMENTS
+// ===============================
+
+const loginBox =
+document.getElementById("loginBox");
+
+const adminPanel =
+document.getElementById("adminPanel");
+
+const loginEmail =
+document.getElementById("loginEmail");
+
+const loginPassword =
+document.getElementById("loginPassword");
+
+const loginBtn =
+document.getElementById("loginBtn");
+
+const loginError =
+document.getElementById("loginError");
+
+const logoutBtn =
+document.getElementById("logoutBtn");
+
+
+// ===============================
+// LOGIN
+// ===============================
+
+loginBtn.addEventListener(
+"click",
+async function(){
+
+  loginError.textContent = "";
+
+  const email =
+  loginEmail.value.trim();
+
+  const password =
+  loginPassword.value;
+
+
+  if(!email || !password){
+
+    loginError.textContent =
+    "Please enter email and password.";
+
+    return;
+
+  }
+
+
+  try{
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+  }catch(error){
+
+    loginError.textContent =
+    "Login failed. Check your email and password.";
+
+    console.error(error);
+
+  }
+
+});
+
+
+// ===============================
+// AUTH STATE
+// ===============================
+
+onAuthStateChanged(
+auth,
+function(user){
+
+  if(user){
+
+    loginBox.classList.add("hidden");
+
+    adminPanel.classList.remove("hidden");
+
+    loadDemoData();
+
+  }else{
+
+    loginBox.classList.remove("hidden");
+
+    adminPanel.classList.add("hidden");
+
+  }
+
+});
+
+
+// ===============================
+// LOGOUT
+// ===============================
+
+logoutBtn.addEventListener(
+"click",
+async function(){
+
+  await signOut(auth);
+
+});
+
+
+// ===============================
+// DEMO DATA
+// ===============================
+
+const defaultData = {
+
+  about:
+  "This section can be changed from the Admin panel.",
+
+  services:[
+
+    {
+      title:"Video Editing",
+      text:"Professional short-form and video editing."
+    },
+
+    {
+      title:"Creative Work",
+      text:"Design, content and digital projects."
+    },
+
+    {
+      title:"Business",
+      text:"A space for your services and future business."
+    }
+
+  ],
+
+  content:[
+
+    {
+      title:"Notes & PDFs",
+      text:"Add useful documents and resources."
+    },
+
+    {
+      title:"Photos",
+      text:"Showcase your images and projects."
+    },
+
+    {
+      title:"Updates",
+      text:"Publish new work, ideas and announcements."
+    }
+
+  ],
+
+  contact:{
+    email:"your@email.com",
+    instagram:"@yourusername",
+    phone:"+91 XXXXX XXXXX"
+  }
+
+};
+
+
+let data =
+JSON.parse(
+localStorage.getItem("yashSiteData")
+) || defaultData;
+
+
+// ===============================
+// LOAD
+// ===============================
+
+function loadDemoData(){
+
+  document.getElementById("about").value =
+  data.about;
+
+  document.getElementById("email").value =
+  data.contact.email;
+
+  document.getElementById("instagram").value =
+  data.contact.instagram;
+
+  document.getElementById("phone").value =
+  data.contact.phone;
+
+
+  renderServices();
+
+  renderContent();
+
+}
+
+
+// ===============================
+// SERVICES
+// ===============================
+
+function renderServices(){
+
+  const box =
+  document.getElementById("services");
+
+  box.innerHTML =
+  data.services.map(
+  function(item,index){
+
+    return `
+
+      <div class="item">
+
+        <input
+          class="admin-input"
+          value="${escapeHtml(item.title)}"
+          data-service-title="${index}"
+        >
+
+        <textarea
+          class="admin-input"
+          rows="3"
+          data-service-text="${index}"
+        >${escapeHtml(item.text)}</textarea>
+
+        <button
+          class="admin-btn logout-btn"
+          onclick="deleteService(${index})"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    `;
+
+  }).join("");
+
+}
+
+
+window.deleteService =
+function(index){
+
+  collectData();
+
+  data.services.splice(index,1);
+
+  renderServices();
+
+};
+
+
+document
+.getElementById("addServiceBtn")
+.addEventListener(
+"click",
+function(){
+
+  collectData();
+
+  data.services.push({
+
+    title:"New Service",
+
+    text:"Describe your service."
+
+  });
+
+  renderServices();
+
+});
+
+
+// ===============================
+// CONTENT
+// ===============================
+
+function renderContent(){
+
+  const box =
+  document.getElementById("content");
+
+  box.innerHTML =
+  data.content.map(
+  function(item,index){
+
+    return `
+
+      <div class="item">
+
+        <input
+          class="admin-input"
+          value="${escapeHtml(item.title)}"
+          data-content-title="${index}"
+        >
+
+        <textarea
+          class="admin-input"
+          rows="3"
+          data-content-text="${index}"
+        >${escapeHtml(item.text)}</textarea>
+
+        <button
+          class="admin-btn logout-btn"
+          onclick="deleteContent(${index})"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    `;
+
+  }).join("");
+
+}
+
+
+window.deleteContent =
+function(index){
+
+  collectData();
+
+  data.content.splice(index,1);
+
+  renderContent();
+
+};
+
+
+document
+.getElementById("addContentBtn")
+.addEventListener(
+"click",
+function(){
+
+  collectData();
+
+  data.content.push({
+
+    title:"New Content",
+
+    text:"Describe your content."
+
+  });
+
+  renderContent();
+
+});
+
+
+// ===============================
+// COLLECT
+// ===============================
+
+function collectData(){
+
+  data.about =
+  document.getElementById("about").value;
+
+
+  data.contact = {
+
+    email:
+    document.getElementById("email").value,
+
+    instagram:
+    document.getElementById("instagram").value,
+
+    phone:
+    document.getElementById("phone").value
+
+  };
+
+
+  document
+  .querySelectorAll("[data-service-title]")
+  .forEach(function(el){
+
+    const i =
+    el.dataset.serviceTitle;
+
+    data.services[i].title =
+    el.value;
+
+  });
+
+
+  document
+  .querySelectorAll("[data-service-text]")
+  .forEach(function(el){
+
+    const i =
+    el.dataset.serviceText;
+
+    data.services[i].text =
+    el.value;
+
+  });
+
+
+  document
+  .querySelectorAll("[data-content-title]")
+  .forEach(function(el){
+
+    const i =
+    el.dataset.contentTitle;
+
+    data.content[i].title =
+    el.value;
+
+  });
+
+
+  document
+  .querySelectorAll("[data-content-text]")
+  .forEach(function(el){
+
+    const i =
+    el.dataset.contentText;
+
+    data.content[i].text =
+    el.value;
+
+  });
+
+}
+
+
+// ===============================
+// SAVE
+// ===============================
+
+document
+.getElementById("saveBtn")
+.addEventListener(
+"click",
+function(){
+
+  collectData();
+
+  localStorage.setItem(
+    "yashSiteData",
+    JSON.stringify(data)
+  );
+
+
+  document.getElementById(
+    "saveMessage"
+  ).textContent =
+  "Changes saved on this browser.";
+
+});
+
+
+// ===============================
+// ESCAPE
+// ===============================
+
+function escapeHtml(value){
+
+  return String(value)
+  .replace(/[&<>"']/g,function(m){
+
+    return {
+
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+
+    }[m];
+
+  });
+
+}
+
+</script>
+
+</body>
+</html>
