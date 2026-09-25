@@ -1,28 +1,17 @@
 <!doctype html>
-
 <html lang="en">
-
 <head>
-
 <meta charset="utf-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
->
-
-<title>PrimeHub — Admin</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — PrimeHub</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
-
 .admin-wrap{
   max-width:1000px;
   margin:auto;
   padding:60px 7%;
 }
-
 .admin-box{
   background:#12151c;
   border:1px solid #252a34;
@@ -30,19 +19,17 @@
   padding:25px;
   margin:20px 0;
 }
-
-.admin-input{
+input,textarea{
   width:100%;
-  margin:8px 0 15px;
+  box-sizing:border-box;
+  margin:7px 0 14px;
   padding:13px;
   border-radius:10px;
   border:1px solid #303642;
   background:#0b0d12;
   color:#fff;
-  box-sizing:border-box;
 }
-
-.admin-btn{
+button{
   border:0;
   border-radius:10px;
   padding:12px 18px;
@@ -51,779 +38,590 @@
   font-weight:700;
   cursor:pointer;
 }
-
-.logout-btn{
-  background:#a33;
+button:hover{opacity:.9}
+.danger{background:#a33}
+.logout{float:right;background:#333}
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
 }
-
-.error{
-  color:#ff7777;
-  margin-top:12px;
-}
-
-.success{
-  color:#62e6a8;
-  margin-top:12px;
-}
-
-.hidden{
-  display:none;
-}
-
 .item{
   border:1px solid #292e38;
   padding:15px;
   border-radius:12px;
   margin:10px 0;
 }
-
+.hidden{display:none}
+.status{
+  margin:15px 0;
+  padding:12px;
+  border-radius:10px;
+  background:#171b24;
+}
+@media(max-width:700px){
+  .row{grid-template-columns:1fr}
+}
 </style>
-
 </head>
-
 
 <body>
 
-
 <header class="nav">
-
-  <a class="brand" href="index.html">
-    YASH<span>.</span>
-  </a>
-
+  <a class="brand" href="index.html">PRIME<span>HUB.</span></a>
   <nav>
     <a href="index.html">View Website</a>
   </nav>
-
 </header>
-
-
 
 <main class="admin-wrap">
 
-
-<!-- ================= LOGIN ================= -->
-
+<!-- LOGIN -->
 <section id="loginBox" class="admin-box">
-
-  <p class="eyebrow">
-    PRIMEHUB ADMIN
-  </p>
-
+  <p class="eyebrow">PRIMEHUB ADMIN</p>
   <h1>Admin Login</h1>
+  <p class="muted">Login with your Firebase admin account.</p>
 
-  <p class="muted">
-    Login with your authorized Firebase account.
-  </p>
+  <label>Email</label>
+  <input id="loginEmail" type="email" placeholder="Admin email">
 
+  <label>Password</label>
+  <input id="loginPassword" type="password" placeholder="Password">
 
-  <label>
-    Email
+  <button id="loginBtn">Login</button>
 
-    <input
-      id="loginEmail"
-      class="admin-input"
-      type="email"
-      placeholder="Admin email"
-    >
-
-  </label>
-
-
-  <label>
-    Password
-
-    <input
-      id="loginPassword"
-      class="admin-input"
-      type="password"
-      placeholder="Password"
-    >
-
-  </label>
-
-
-  <button
-    class="admin-btn"
-    id="loginBtn"
-  >
-    Login
-  </button>
-
-
-  <p id="loginError" class="error"></p>
-
+  <div id="loginStatus" class="status hidden"></div>
 </section>
 
 
-
-<!-- ================= ADMIN PANEL ================= -->
-
-<section
-  id="adminPanel"
-  class="hidden"
->
-
+<!-- ADMIN PANEL -->
+<section id="adminPanel" class="hidden">
 
   <div class="admin-box">
+    <button id="logoutBtn" class="logout">Logout</button>
 
-    <p class="eyebrow">
-      ADMIN PANEL
-    </p>
-
+    <p class="eyebrow">ADMIN PANEL</p>
     <h1>Manage PrimeHub</h1>
-
     <p class="muted">
-      You are logged in as admin.
+      Changes are saved to Firebase and can be accessed from any device.
     </p>
 
-    <button
-      class="admin-btn logout-btn"
-      id="logoutBtn"
-    >
-      Logout
-    </button>
-
+    <div id="saveStatus" class="status">
+      Ready.
+    </div>
   </div>
-
 
 
   <!-- ABOUT -->
-
   <div class="admin-box">
-
     <h2>About</h2>
-
-    <textarea
-      id="about"
-      class="admin-input"
-      rows="5"
-    ></textarea>
-
+    <textarea id="about" rows="5"></textarea>
   </div>
 
 
-
   <!-- SERVICES -->
-
   <div class="admin-box">
-
     <h2>Services</h2>
 
     <div id="services"></div>
 
-    <button
-      class="admin-btn"
-      id="addServiceBtn"
-    >
-      + Add Service
-    </button>
-
+    <button id="addServiceBtn">+ Add Service</button>
   </div>
 
 
-
   <!-- CONTENT -->
-
   <div class="admin-box">
-
     <h2>Content</h2>
 
     <div id="content"></div>
 
-    <button
-      class="admin-btn"
-      id="addContentBtn"
-    >
-      + Add Content
-    </button>
-
+    <button id="addContentBtn">+ Add Content</button>
   </div>
-
 
 
   <!-- CONTACT -->
-
   <div class="admin-box">
-
     <h2>Contact</h2>
 
-    <input
-      id="email"
-      class="admin-input"
-      placeholder="Email"
-    >
+    <div class="row">
+      <label>
+        Email
+        <input id="email" type="email">
+      </label>
 
-    <input
-      id="instagram"
-      class="admin-input"
-      placeholder="Instagram"
-    >
+      <label>
+        Instagram
+        <input id="instagram" type="text">
+      </label>
+    </div>
 
-    <input
-      id="phone"
-      class="admin-input"
-      placeholder="Phone"
-    >
-
+    <label>
+      Phone
+      <input id="phone" type="text">
+    </label>
   </div>
 
 
-
-  <button
-    class="admin-btn"
-    id="saveBtn"
-  >
-    Save Changes
-  </button>
-
-
-  <p
-    id="saveMessage"
-    class="success"
-  ></p>
-
+  <button id="saveBtn">Save Changes</button>
 
 </section>
-
 
 </main>
 
 
-
 <script type="module">
 
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 
 import {
   getAuth,
-  signInWithEmailAndPassword,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signOut
 }
-from
-"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc
+}
+from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 
-// ===============================
-// FIREBASE
-// ===============================
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
-
-  apiKey:
-  "AIzaSyBCx_8R-fGh9Ci4M-0Fk57dQnRfXe74YSY",
-
-  authDomain:
-  "primehub-12dde.firebaseapp.com",
-
-  projectId:
-  "primehub-12dde",
-
-  storageBucket:
-  "primehub-12dde.firebasestorage.app",
-
-  messagingSenderId:
-  "1081645394839",
-
-  appId:
-  "1:1081645394839:web:796cc1c3de6d1ce201b2d2",
-
-  measurementId:
-  "G-878ZB4S1LP"
-
+  apiKey: "AIzaSyBCx_8R-fGh9Ci4M-0Fk57dQnRfXe74YSY",
+  authDomain: "primehub-12dde.firebaseapp.com",
+  projectId: "primehub-12dde",
+  storageBucket: "primehub-12dde.firebasestorage.app",
+  messagingSenderId: "1081645394839",
+  appId: "1:1081645394839:web:796cc1c3de6d1ce201b2d2",
+  measurementId: "G-878ZB4S1LP"
 };
 
 
+/* INITIALIZE FIREBASE */
+
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 
-// ===============================
-// ELEMENTS
-// ===============================
+/* DEFAULT DATA */
 
-const loginBox =
-document.getElementById("loginBox");
+const defaultData = {
+  about:
+    "Welcome to PrimeHub — my personal and business digital space.",
 
-const adminPanel =
-document.getElementById("adminPanel");
+  services: [
+    {
+      title: "Video Editing",
+      text: "Professional short-form and video editing."
+    },
+    {
+      title: "Creative Work",
+      text: "Design, content and digital projects."
+    },
+    {
+      title: "Business",
+      text: "A space for services and future business ideas."
+    }
+  ],
 
-const loginEmail =
-document.getElementById("loginEmail");
+  content: [
+    {
+      title: "Notes & PDFs",
+      text: "Useful documents and resources."
+    },
+    {
+      title: "Photos",
+      text: "Showcase images and projects."
+    },
+    {
+      title: "Updates",
+      text: "New work, ideas and announcements."
+    }
+  ],
 
-const loginPassword =
-document.getElementById("loginPassword");
-
-const loginBtn =
-document.getElementById("loginBtn");
-
-const loginError =
-document.getElementById("loginError");
-
-const logoutBtn =
-document.getElementById("logoutBtn");
-
-
-// ===============================
-// LOGIN
-// ===============================
-
-loginBtn.addEventListener(
-"click",
-async function(){
-
-  loginError.textContent = "";
-
-  const email =
-  loginEmail.value.trim();
-
-  const password =
-  loginPassword.value;
+  contact: {
+    email: "your@email.com",
+    instagram: "@yourusername",
+    phone: "+91 XXXXX XXXXX"
+  }
+};
 
 
-  if(!email || !password){
+let data = structuredClone(defaultData);
 
-    loginError.textContent =
-    "Please enter email and password.";
 
+/* ELEMENTS */
+
+const loginBox = document.getElementById("loginBox");
+const adminPanel = document.getElementById("adminPanel");
+
+const loginEmail = document.getElementById("loginEmail");
+const loginPassword = document.getElementById("loginPassword");
+const loginBtn = document.getElementById("loginBtn");
+const loginStatus = document.getElementById("loginStatus");
+
+const about = document.getElementById("about");
+const services = document.getElementById("services");
+const content = document.getElementById("content");
+
+const email = document.getElementById("email");
+const instagram = document.getElementById("instagram");
+const phone = document.getElementById("phone");
+
+const saveBtn = document.getElementById("saveBtn");
+const saveStatus = document.getElementById("saveStatus");
+
+const addServiceBtn = document.getElementById("addServiceBtn");
+const addContentBtn = document.getElementById("addContentBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+
+/* STATUS */
+
+function showLoginStatus(message){
+  loginStatus.textContent = message;
+  loginStatus.classList.remove("hidden");
+}
+
+
+/* ESCAPE HTML */
+
+function esc(value){
+  return String(value).replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m]));
+}
+
+
+/* RENDER */
+
+function render(){
+
+  about.value = data.about || "";
+
+  email.value = data.contact?.email || "";
+  instagram.value = data.contact?.instagram || "";
+  phone.value = data.contact?.phone || "";
+
+
+  services.innerHTML = data.services.map((item,index)=>`
+
+    <div class="item">
+
+      <label>Service title</label>
+
+      <input
+        value="${esc(item.title)}"
+        data-service-title="${index}"
+      >
+
+      <label>Service description</label>
+
+      <textarea
+        rows="3"
+        data-service-text="${index}"
+      >${esc(item.text)}</textarea>
+
+      <button
+        class="danger"
+        data-delete-service="${index}">
+        Delete
+      </button>
+
+    </div>
+
+  `).join("");
+
+
+  content.innerHTML = data.content.map((item,index)=>`
+
+    <div class="item">
+
+      <label>Content title</label>
+
+      <input
+        value="${esc(item.title)}"
+        data-content-title="${index}"
+      >
+
+      <label>Content description</label>
+
+      <textarea
+        rows="3"
+        data-content-text="${index}"
+      >${esc(item.text)}</textarea>
+
+      <button
+        class="danger"
+        data-delete-content="${index}">
+        Delete
+      </button>
+
+    </div>
+
+  `).join("");
+}
+
+
+/* COLLECT FORM DATA */
+
+function collect(){
+
+  data.about = about.value;
+
+  data.contact = {
+    email: email.value,
+    instagram: instagram.value,
+    phone: phone.value
+  };
+
+
+  document.querySelectorAll("[data-service-title]")
+  .forEach(el=>{
+    const i = Number(el.dataset.serviceTitle);
+    data.services[i].title = el.value;
+  });
+
+
+  document.querySelectorAll("[data-service-text]")
+  .forEach(el=>{
+    const i = Number(el.dataset.serviceText);
+    data.services[i].text = el.value;
+  });
+
+
+  document.querySelectorAll("[data-content-title]")
+  .forEach(el=>{
+    const i = Number(el.dataset.contentTitle);
+    data.content[i].title = el.value;
+  });
+
+
+  document.querySelectorAll("[data-content-text]")
+  .forEach(el=>{
+    const i = Number(el.dataset.contentText);
+    data.content[i].text = el.value;
+  });
+}
+
+
+/* LOAD FROM FIRESTORE */
+
+async function loadData(){
+
+  try{
+
+    const ref = doc(db,"siteData","main");
+    const snap = await getDoc(ref);
+
+    if(snap.exists()){
+
+      data = snap.data();
+
+    }else{
+
+      data = structuredClone(defaultData);
+
+    }
+
+    render();
+
+    saveStatus.textContent =
+      "✓ Data loaded from Firebase.";
+
+  }catch(error){
+
+    console.error(error);
+
+    saveStatus.textContent =
+      "Firebase read error: " + error.message;
+  }
+}
+
+
+/* SAVE TO FIRESTORE */
+
+async function saveData(){
+
+  collect();
+
+  saveBtn.disabled = true;
+  saveStatus.textContent = "Saving...";
+
+  try{
+
+    const ref = doc(db,"siteData","main");
+
+    await setDoc(ref,data);
+
+    saveStatus.textContent =
+      "✓ Saved successfully to Firebase.";
+
+  }catch(error){
+
+    console.error(error);
+
+    saveStatus.textContent =
+      "Save error: " + error.message;
+
+  }finally{
+
+    saveBtn.disabled = false;
+  }
+}
+
+
+/* LOGIN */
+
+loginBtn.addEventListener("click",async()=>{
+
+  const userEmail = loginEmail.value.trim();
+  const password = loginPassword.value;
+
+  if(!userEmail || !password){
+
+    showLoginStatus("Email and password required.");
     return;
-
   }
 
+  loginBtn.disabled = true;
+  showLoginStatus("Logging in...");
 
   try{
 
     await signInWithEmailAndPassword(
       auth,
-      email,
+      userEmail,
       password
     );
 
-  }catch(error){
+    showLoginStatus("Login successful.");
 
-    loginError.textContent =
-    "Login failed. Check your email and password.";
+  }catch(error){
 
     console.error(error);
 
+    showLoginStatus(
+      "Login failed: " + error.message
+    );
+
+  }finally{
+
+    loginBtn.disabled = false;
   }
 
 });
 
 
-// ===============================
-// AUTH STATE
-// ===============================
+/* LOGOUT */
 
-onAuthStateChanged(
-auth,
-function(user){
+logoutBtn.addEventListener("click",()=>{
+
+  signOut(auth);
+
+});
+
+
+/* SAVE */
+
+saveBtn.addEventListener("click",saveData);
+
+
+/* ADD SERVICE */
+
+addServiceBtn.addEventListener("click",()=>{
+
+  collect();
+
+  data.services.push({
+    title:"New Service",
+    text:"Describe your service."
+  });
+
+  render();
+
+});
+
+
+/* ADD CONTENT */
+
+addContentBtn.addEventListener("click",()=>{
+
+  collect();
+
+  data.content.push({
+    title:"New Content",
+    text:"Describe your content."
+  });
+
+  render();
+
+});
+
+
+/* DELETE SERVICE / CONTENT */
+
+document.addEventListener("click",event=>{
+
+  if(event.target.dataset.deleteService !== undefined){
+
+    collect();
+
+    const index =
+      Number(event.target.dataset.deleteService);
+
+    data.services.splice(index,1);
+
+    render();
+  }
+
+
+  if(event.target.dataset.deleteContent !== undefined){
+
+    collect();
+
+    const index =
+      Number(event.target.dataset.deleteContent);
+
+    data.content.splice(index,1);
+
+    render();
+  }
+
+});
+
+
+/* AUTH STATE */
+
+onAuthStateChanged(auth,async(user)=>{
 
   if(user){
 
     loginBox.classList.add("hidden");
-
     adminPanel.classList.remove("hidden");
 
-    loadDemoData();
+    await loadData();
 
   }else{
 
     loginBox.classList.remove("hidden");
-
     adminPanel.classList.add("hidden");
 
   }
 
 });
-
-
-// ===============================
-// LOGOUT
-// ===============================
-
-logoutBtn.addEventListener(
-"click",
-async function(){
-
-  await signOut(auth);
-
-});
-
-
-// ===============================
-// DEMO DATA
-// ===============================
-
-const defaultData = {
-
-  about:
-  "This section can be changed from the Admin panel.",
-
-  services:[
-
-    {
-      title:"Video Editing",
-      text:"Professional short-form and video editing."
-    },
-
-    {
-      title:"Creative Work",
-      text:"Design, content and digital projects."
-    },
-
-    {
-      title:"Business",
-      text:"A space for your services and future business."
-    }
-
-  ],
-
-  content:[
-
-    {
-      title:"Notes & PDFs",
-      text:"Add useful documents and resources."
-    },
-
-    {
-      title:"Photos",
-      text:"Showcase your images and projects."
-    },
-
-    {
-      title:"Updates",
-      text:"Publish new work, ideas and announcements."
-    }
-
-  ],
-
-  contact:{
-    email:"your@email.com",
-    instagram:"@yourusername",
-    phone:"+91 XXXXX XXXXX"
-  }
-
-};
-
-
-let data =
-JSON.parse(
-localStorage.getItem("yashSiteData")
-) || defaultData;
-
-
-// ===============================
-// LOAD
-// ===============================
-
-function loadDemoData(){
-
-  document.getElementById("about").value =
-  data.about;
-
-  document.getElementById("email").value =
-  data.contact.email;
-
-  document.getElementById("instagram").value =
-  data.contact.instagram;
-
-  document.getElementById("phone").value =
-  data.contact.phone;
-
-
-  renderServices();
-
-  renderContent();
-
-}
-
-
-// ===============================
-// SERVICES
-// ===============================
-
-function renderServices(){
-
-  const box =
-  document.getElementById("services");
-
-  box.innerHTML =
-  data.services.map(
-  function(item,index){
-
-    return `
-
-      <div class="item">
-
-        <input
-          class="admin-input"
-          value="${escapeHtml(item.title)}"
-          data-service-title="${index}"
-        >
-
-        <textarea
-          class="admin-input"
-          rows="3"
-          data-service-text="${index}"
-        >${escapeHtml(item.text)}</textarea>
-
-        <button
-          class="admin-btn logout-btn"
-          onclick="deleteService(${index})"
-        >
-          Delete
-        </button>
-
-      </div>
-
-    `;
-
-  }).join("");
-
-}
-
-
-window.deleteService =
-function(index){
-
-  collectData();
-
-  data.services.splice(index,1);
-
-  renderServices();
-
-};
-
-
-document
-.getElementById("addServiceBtn")
-.addEventListener(
-"click",
-function(){
-
-  collectData();
-
-  data.services.push({
-
-    title:"New Service",
-
-    text:"Describe your service."
-
-  });
-
-  renderServices();
-
-});
-
-
-// ===============================
-// CONTENT
-// ===============================
-
-function renderContent(){
-
-  const box =
-  document.getElementById("content");
-
-  box.innerHTML =
-  data.content.map(
-  function(item,index){
-
-    return `
-
-      <div class="item">
-
-        <input
-          class="admin-input"
-          value="${escapeHtml(item.title)}"
-          data-content-title="${index}"
-        >
-
-        <textarea
-          class="admin-input"
-          rows="3"
-          data-content-text="${index}"
-        >${escapeHtml(item.text)}</textarea>
-
-        <button
-          class="admin-btn logout-btn"
-          onclick="deleteContent(${index})"
-        >
-          Delete
-        </button>
-
-      </div>
-
-    `;
-
-  }).join("");
-
-}
-
-
-window.deleteContent =
-function(index){
-
-  collectData();
-
-  data.content.splice(index,1);
-
-  renderContent();
-
-};
-
-
-document
-.getElementById("addContentBtn")
-.addEventListener(
-"click",
-function(){
-
-  collectData();
-
-  data.content.push({
-
-    title:"New Content",
-
-    text:"Describe your content."
-
-  });
-
-  renderContent();
-
-});
-
-
-// ===============================
-// COLLECT
-// ===============================
-
-function collectData(){
-
-  data.about =
-  document.getElementById("about").value;
-
-
-  data.contact = {
-
-    email:
-    document.getElementById("email").value,
-
-    instagram:
-    document.getElementById("instagram").value,
-
-    phone:
-    document.getElementById("phone").value
-
-  };
-
-
-  document
-  .querySelectorAll("[data-service-title]")
-  .forEach(function(el){
-
-    const i =
-    el.dataset.serviceTitle;
-
-    data.services[i].title =
-    el.value;
-
-  });
-
-
-  document
-  .querySelectorAll("[data-service-text]")
-  .forEach(function(el){
-
-    const i =
-    el.dataset.serviceText;
-
-    data.services[i].text =
-    el.value;
-
-  });
-
-
-  document
-  .querySelectorAll("[data-content-title]")
-  .forEach(function(el){
-
-    const i =
-    el.dataset.contentTitle;
-
-    data.content[i].title =
-    el.value;
-
-  });
-
-
-  document
-  .querySelectorAll("[data-content-text]")
-  .forEach(function(el){
-
-    const i =
-    el.dataset.contentText;
-
-    data.content[i].text =
-    el.value;
-
-  });
-
-}
-
-
-// ===============================
-// SAVE
-// ===============================
-
-document
-.getElementById("saveBtn")
-.addEventListener(
-"click",
-function(){
-
-  collectData();
-
-  localStorage.setItem(
-    "yashSiteData",
-    JSON.stringify(data)
-  );
-
-
-  document.getElementById(
-    "saveMessage"
-  ).textContent =
-  "Changes saved on this browser.";
-
-});
-
-
-// ===============================
-// ESCAPE
-// ===============================
-
-function escapeHtml(value){
-
-  return String(value)
-  .replace(/[&<>"']/g,function(m){
-
-    return {
-
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#039;"
-
-    }[m];
-
-  });
-
-}
 
 </script>
 
