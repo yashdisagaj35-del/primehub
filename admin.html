@@ -1,299 +1,338 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title>PrimeHub Admin</title>
+<title>PrimeHub Admin</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+*{box-sizing:border-box}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b0b0f;
-      color: #fff;
-    }
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#09090d;
+  color:#fff;
+}
 
-    .wrap {
-      max-width: 1000px;
-      margin: auto;
-      padding: 25px;
-    }
+.wrap{
+  max-width:1100px;
+  margin:auto;
+  padding:25px;
+}
 
-    h1, h2, h3 {
-      margin-top: 0;
-    }
+h1,h2,h3{margin-top:0}
 
-    .box {
-      background: #15151c;
-      border: 1px solid #292936;
-      border-radius: 16px;
-      padding: 22px;
-      margin-bottom: 20px;
-    }
+.box{
+  background:#14141b;
+  border:1px solid #292933;
+  border-radius:16px;
+  padding:22px;
+  margin-bottom:20px;
+}
 
-    input,
-    textarea {
-      width: 100%;
-      padding: 13px;
-      margin: 7px 0 12px;
-      border-radius: 9px;
-      border: 1px solid #33333f;
-      background: #0d0d12;
-      color: white;
-      outline: none;
-    }
+input,textarea{
+  width:100%;
+  padding:13px;
+  margin:7px 0 12px;
+  border-radius:9px;
+  border:1px solid #33333f;
+  background:#0d0d12;
+  color:#fff;
+  outline:none;
+}
 
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
 
-    button {
-      border: 0;
-      border-radius: 9px;
-      padding: 12px 18px;
-      cursor: pointer;
-      background: white;
-      color: black;
-      font-weight: bold;
-      margin: 4px;
-    }
+button{
+  border:0;
+  border-radius:9px;
+  padding:12px 18px;
+  cursor:pointer;
+  background:#fff;
+  color:#000;
+  font-weight:bold;
+  margin:4px;
+}
 
-    button:hover {
-      opacity: .85;
-    }
+button:hover{opacity:.85}
 
-    .danger {
-      background: #d33;
-      color: white;
-    }
+.danger{
+  background:#d93636;
+  color:#fff;
+}
 
-    .secondary {
-      background: #292936;
-      color: white;
-    }
+.secondary{
+  background:#292933;
+  color:#fff;
+}
 
-    .hidden {
-      display: none !important;
-    }
+.edit{
+  background:#44445a;
+  color:#fff;
+}
 
-    .item {
-      background: #0d0d12;
-      border: 1px solid #292936;
-      border-radius: 12px;
-      padding: 15px;
-      margin: 10px 0;
-    }
+.hidden{display:none!important}
 
-    .status {
-      padding: 12px;
-      border-radius: 8px;
-      background: #20202a;
-      margin: 10px 0;
-    }
+.status{
+  padding:12px;
+  border-radius:8px;
+  background:#20202a;
+  margin:10px 0;
+}
 
-    .logout {
-      float: right;
-    }
+.item{
+  background:#0d0d12;
+  border:1px solid #292933;
+  border-radius:12px;
+  padding:16px;
+  margin:12px 0;
+}
 
-    small {
-      color: #aaa;
-    }
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
 
-    @media(max-width:600px) {
-      .wrap {
-        padding: 15px;
-      }
+.media-preview{
+  width:100%;
+  max-height:300px;
+  object-fit:cover;
+  border-radius:10px;
+  margin-bottom:12px;
+}
 
-      .logout {
-        float: none;
-        margin-bottom: 15px;
-      }
-    }
-  </style>
+.logout{
+  float:right;
+}
+
+small{
+  color:#aaa;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:15px;
+}
+
+@media(max-width:600px){
+  .wrap{padding:15px}
+  .logout{
+    float:none;
+    margin-bottom:15px;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <div class="wrap">
 
-  <!-- LOGIN -->
-  <section id="loginBox" class="box">
+<!-- ================= LOGIN ================= -->
 
-    <h1>PrimeHub Admin</h1>
-    <p><small>Login to manage your website.</small></p>
+<section id="loginBox" class="box">
 
-    <input
-      id="email"
-      type="email"
-      placeholder="Email"
-      autocomplete="email"
-    >
+<h1>PrimeHub Admin</h1>
 
-    <input
-      id="password"
-      type="password"
-      placeholder="Password"
-      autocomplete="current-password"
-    >
+<p>
+<small>Private website management panel</small>
+</p>
 
-    <button id="loginBtn">Login</button>
+<input
+id="email"
+type="email"
+placeholder="Email"
+autocomplete="email"
+>
 
-    <div id="loginStatus" class="status"></div>
+<input
+id="password"
+type="password"
+placeholder="Password"
+autocomplete="current-password"
+>
 
-  </section>
+<button id="loginBtn">
+Login
+</button>
 
+<div id="loginStatus" class="status">
+Please login.
+</div>
 
-  <!-- ADMIN -->
-  <section id="adminBox" class="hidden">
-
-    <button id="logoutBtn" class="secondary logout">
-      Logout
-    </button>
-
-    <h1>PrimeHub Admin Panel</h1>
-
-    <div id="saveStatus" class="status">
-      Ready.
-    </div>
+</section>
 
 
-    <!-- ABOUT -->
-    <div class="box">
+<!-- ================= ADMIN ================= -->
 
-      <h2>About</h2>
+<section id="adminBox" class="hidden">
 
-      <textarea
-        id="about"
-        placeholder="Write your About section..."
-      ></textarea>
+<button id="logoutBtn" class="secondary logout">
+Logout
+</button>
 
-      <button id="saveAboutBtn">
-        Save About
-      </button>
+<h1>PrimeHub Admin Panel</h1>
 
-    </div>
+<div id="saveStatus" class="status">
+Ready.
+</div>
 
 
-    <!-- SERVICES -->
-    <div class="box">
+<!-- ================= ABOUT ================= -->
 
-      <h2>Services</h2>
+<div class="box">
 
-      <input
-        id="serviceTitle"
-        placeholder="Service title"
-      >
+<h2>About</h2>
 
-      <textarea
-        id="serviceText"
-        placeholder="Service description"
-      ></textarea>
+<textarea
+id="about"
+placeholder="Write your About section..."
+></textarea>
 
-      <button id="addServiceBtn">
-        Add Service
-      </button>
+<button id="saveAboutBtn">
+Save About
+</button>
 
-      <div id="servicesList"></div>
-
-    </div>
+</div>
 
 
-    <!-- CONTENT -->
-    <div class="box">
+<!-- ================= SERVICES ================= -->
 
-      <h2>Content</h2>
+<div class="box">
 
-      <input
-        id="contentTitle"
-        placeholder="Content title"
-      >
+<h2>Services</h2>
 
-      <textarea
-        id="contentText"
-        placeholder="Content description"
-      ></textarea>
+<input
+id="serviceTitle"
+placeholder="Service title"
+>
 
-      <button id="addContentBtn">
-        Add Content
-      </button>
+<textarea
+id="serviceText"
+placeholder="Service description"
+></textarea>
 
-      <div id="contentList"></div>
+<button id="addServiceBtn">
+Add Service
+</button>
 
-    </div>
+<div id="servicesList"></div>
 
-
-    <!-- CONTACT -->
-    <div class="box">
-
-      <h2>Contact</h2>
-
-      <input
-        id="contactEmail"
-        type="email"
-        placeholder="Email"
-      >
-
-      <input
-        id="contactInstagram"
-        placeholder="Instagram"
-      >
-
-      <input
-        id="contactPhone"
-        placeholder="Phone"
-      >
-
-      <button id="saveContactBtn">
-        Save Contact
-      </button>
-
-    </div>
+</div>
 
 
-    <!-- MEDIA -->
-    <div class="box">
+<!-- ================= CONTENT ================= -->
 
-      <h2>Upload Media</h2>
+<div class="box">
 
-      <p>
-        <small>
-          Upload photos, videos or PDFs.
-        </small>
-      </p>
+<h2>Content</h2>
 
-      <input
-        id="mediaTitle"
-        placeholder="File title"
-      >
+<input
+id="contentTitle"
+placeholder="Content title"
+>
 
-      <textarea
-        id="mediaDescription"
-        placeholder="File description"
-      ></textarea>
+<textarea
+id="contentText"
+placeholder="Content description"
+></textarea>
 
-      <input
-        id="mediaFile"
-        type="file"
-        accept="image/*,video/*,.pdf"
-      >
+<button id="addContentBtn">
+Add Content
+</button>
 
-      <button id="uploadBtn">
-        Upload File
-      </button>
+<div id="contentList"></div>
 
-      <div id="uploadStatus" class="status"></div>
+</div>
 
-      <div id="mediaList"></div>
 
-    </div>
+<!-- ================= CONTACT ================= -->
 
-  </section>
+<div class="box">
+
+<h2>Contact</h2>
+
+<input
+id="contactEmail"
+type="email"
+placeholder="Email"
+>
+
+<input
+id="contactInstagram"
+placeholder="Instagram"
+>
+
+<input
+id="contactPhone"
+placeholder="Phone"
+>
+
+<button id="saveContactBtn">
+Save Contact
+</button>
+
+</div>
+
+
+<!-- ================= MEDIA ================= -->
+
+<div class="box">
+
+<h2>Upload Media</h2>
+
+<p>
+<small>
+Upload photos, videos or PDF documents.
+</small>
+</p>
+
+<input
+id="mediaTitle"
+placeholder="File title"
+>
+
+<textarea
+id="mediaDescription"
+placeholder="File description"
+></textarea>
+
+<input
+id="mediaFile"
+type="file"
+accept="image/*,video/*,.pdf"
+>
+
+<button id="uploadBtn">
+Upload File
+</button>
+
+<div id="uploadStatus" class="status"></div>
+
+</div>
+
+
+<!-- ================= MEDIA LIST ================= -->
+
+<div class="box">
+
+<h2>Uploaded Media</h2>
+
+<div
+id="mediaList"
+class="grid"
+></div>
+
+</div>
+
+</section>
 
 </div>
 
@@ -301,7 +340,7 @@
 <script type="module">
 
 /* =========================================
-   FIREBASE
+   FIREBASE IMPORTS
 ========================================= */
 
 import {
@@ -345,7 +384,7 @@ const firebaseConfig = {
     "1081645394839",
 
   appId:
-    "1:1081645394839:web:796cc1c3de6d1ce201b2d2",
+    "1:108164539483:web:796cc1c3de6d1ce201b2d2",
 
   measurementId:
     "G-878ZB4S1LP"
@@ -369,23 +408,25 @@ const ADMIN_UID =
 
 
 /* =========================================
-   INITIALIZE
+   FIREBASE INITIALIZE
 ========================================= */
 
-const app = initializeApp(firebaseConfig);
+const app =
+  initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth =
+  getAuth(app);
 
-const db = getFirestore(app);
+const db =
+  getFirestore(app);
+
+const dataRef =
+  doc(db,"siteData","main");
 
 
 /* =========================================
-   FIREBASE DATA
+   DEFAULT DATA
 ========================================= */
-
-const dataRef =
-  doc(db, "siteData", "main");
-
 
 const defaultData = {
 
@@ -396,14 +437,13 @@ const defaultData = {
 
   content: [],
 
-  contact: {
-    email: "",
-    instagram: "",
-    phone: ""
+  contact:{
+    email:"",
+    instagram:"",
+    phone:""
   },
 
-  media: []
-
+  media:[]
 };
 
 
@@ -420,20 +460,14 @@ const loginBox =
 const adminBox =
   document.getElementById("adminBox");
 
-const emailInput =
-  document.getElementById("email");
-
-const passwordInput =
-  document.getElementById("password");
-
 const loginBtn =
   document.getElementById("loginBtn");
 
-const loginStatus =
-  document.getElementById("loginStatus");
-
 const logoutBtn =
   document.getElementById("logoutBtn");
+
+const loginStatus =
+  document.getElementById("loginStatus");
 
 const saveStatus =
   document.getElementById("saveStatus");
@@ -443,18 +477,23 @@ const saveStatus =
    LOGIN
 ========================================= */
 
-loginBtn.addEventListener("click", async () => {
+loginBtn.addEventListener(
+"click",
+async()=>{
 
   const email =
-    emailInput.value.trim();
+    document.getElementById("email")
+    .value
+    .trim();
 
   const password =
-    passwordInput.value;
+    document.getElementById("password")
+    .value;
 
-  if (!email || !password) {
+  if(!email || !password){
 
     loginStatus.textContent =
-      "Please enter email and password.";
+      "Enter email and password.";
 
     return;
   }
@@ -462,7 +501,7 @@ loginBtn.addEventListener("click", async () => {
   loginStatus.textContent =
     "Logging in...";
 
-  try {
+  try{
 
     const result =
       await signInWithEmailAndPassword(
@@ -471,7 +510,7 @@ loginBtn.addEventListener("click", async () => {
         password
       );
 
-    if (result.user.uid !== ADMIN_UID) {
+    if(result.user.uid !== ADMIN_UID){
 
       await signOut(auth);
 
@@ -484,12 +523,12 @@ loginBtn.addEventListener("click", async () => {
     loginStatus.textContent =
       "Login successful.";
 
-  } catch (error) {
+  }catch(error){
 
     console.error(error);
 
     loginStatus.textContent =
-      "Login failed: " + error.message;
+      "Login failed: "+error.message;
   }
 
 });
@@ -499,9 +538,11 @@ loginBtn.addEventListener("click", async () => {
    AUTH STATE
 ========================================= */
 
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(
+auth,
+async(user)=>{
 
-  if (user && user.uid === ADMIN_UID) {
+  if(user && user.uid === ADMIN_UID){
 
     loginBox.classList.add("hidden");
 
@@ -509,35 +550,36 @@ onAuthStateChanged(auth, async (user) => {
 
     await loadData();
 
-  } else {
+  }else{
 
     loginBox.classList.remove("hidden");
 
     adminBox.classList.add("hidden");
+
   }
 
 });
 
 
 /* =========================================
-   LOAD FIRESTORE
+   LOAD DATA
 ========================================= */
 
-async function loadData() {
+async function loadData(){
 
-  try {
+  try{
 
     const snapshot =
       await getDoc(dataRef);
 
-    if (snapshot.exists()) {
+    if(snapshot.exists()){
 
       siteData = {
         ...defaultData,
         ...snapshot.data()
       };
 
-    } else {
+    }else{
 
       siteData = {
         ...defaultData
@@ -546,42 +588,68 @@ async function loadData() {
       await saveData();
     }
 
+    normalizeData();
+
     renderAll();
 
-  } catch (error) {
+  }catch(error){
 
     console.error(error);
 
     saveStatus.textContent =
-      "Failed to load Firebase data.";
+      "Failed to load data.";
   }
 
 }
 
 
 /* =========================================
-   SAVE FIRESTORE
+   NORMALIZE
 ========================================= */
 
-async function saveData() {
+function normalizeData(){
 
-  try {
+  if(!Array.isArray(siteData.services))
+    siteData.services=[];
+
+  if(!Array.isArray(siteData.content))
+    siteData.content=[];
+
+  if(!Array.isArray(siteData.media))
+    siteData.media=[];
+
+  if(!siteData.contact)
+    siteData.contact={
+      email:"",
+      instagram:"",
+      phone:""
+    };
+}
+
+
+/* =========================================
+   SAVE DATA
+========================================= */
+
+async function saveData(){
+
+  try{
 
     await setDoc(
       dataRef,
       siteData,
-      { merge: true }
+      {merge:true}
     );
 
     saveStatus.textContent =
       "✓ Saved successfully.";
 
-  } catch (error) {
+  }catch(error){
 
     console.error(error);
 
     saveStatus.textContent =
-      "Save failed: " + error.message;
+      "Save failed: "+error.message;
   }
 
 }
@@ -592,14 +660,20 @@ async function saveData() {
 ========================================= */
 
 document
-  .getElementById("saveAboutBtn")
-  .addEventListener("click", async () => {
+.getElementById("saveAboutBtn")
+.addEventListener(
+"click",
+async()=>{
 
-    siteData.about =
-      document.getElementById("about").value.trim();
+  siteData.about =
+    document
+    .getElementById("about")
+    .value
+    .trim();
 
-    await saveData();
-  });
+  await saveData();
+
+});
 
 
 /* =========================================
@@ -607,40 +681,48 @@ document
 ========================================= */
 
 document
-  .getElementById("addServiceBtn")
-  .addEventListener("click", async () => {
+.getElementById("addServiceBtn")
+.addEventListener(
+"click",
+async()=>{
 
-    const title =
-      document.getElementById("serviceTitle")
-        .value.trim();
+  const title =
+    document
+    .getElementById("serviceTitle")
+    .value
+    .trim();
 
-    const text =
-      document.getElementById("serviceText")
-        .value.trim();
+  const text =
+    document
+    .getElementById("serviceText")
+    .value
+    .trim();
 
-    if (!title) {
+  if(!title){
 
-      alert("Enter service title.");
+    alert("Enter service title.");
 
-      return;
-    }
+    return;
+  }
 
-    if (!Array.isArray(siteData.services)) {
-      siteData.services = [];
-    }
-
-    siteData.services.push({
-      title,
-      text
-    });
-
-    document.getElementById("serviceTitle").value = "";
-    document.getElementById("serviceText").value = "";
-
-    await saveData();
-
-    renderServices();
+  siteData.services.push({
+    title,
+    text
   });
+
+  document
+  .getElementById("serviceTitle")
+  .value="";
+
+  document
+  .getElementById("serviceText")
+  .value="";
+
+  await saveData();
+
+  renderServices();
+
+});
 
 
 /* =========================================
@@ -648,40 +730,48 @@ document
 ========================================= */
 
 document
-  .getElementById("addContentBtn")
-  .addEventListener("click", async () => {
+.getElementById("addContentBtn")
+.addEventListener(
+"click",
+async()=>{
 
-    const title =
-      document.getElementById("contentTitle")
-        .value.trim();
+  const title =
+    document
+    .getElementById("contentTitle")
+    .value
+    .trim();
 
-    const text =
-      document.getElementById("contentText")
-        .value.trim();
+  const text =
+    document
+    .getElementById("contentText")
+    .value
+    .trim();
 
-    if (!title) {
+  if(!title){
 
-      alert("Enter content title.");
+    alert("Enter content title.");
 
-      return;
-    }
+    return;
+  }
 
-    if (!Array.isArray(siteData.content)) {
-      siteData.content = [];
-    }
-
-    siteData.content.push({
-      title,
-      text
-    });
-
-    document.getElementById("contentTitle").value = "";
-    document.getElementById("contentText").value = "";
-
-    await saveData();
-
-    renderContent();
+  siteData.content.push({
+    title,
+    text
   });
+
+  document
+  .getElementById("contentTitle")
+  .value="";
+
+  document
+  .getElementById("contentText")
+  .value="";
+
+  await saveData();
+
+  renderContent();
+
+});
 
 
 /* =========================================
@@ -689,39 +779,94 @@ document
 ========================================= */
 
 document
-  .getElementById("saveContactBtn")
-  .addEventListener("click", async () => {
+.getElementById("saveContactBtn")
+.addEventListener(
+"click",
+async()=>{
 
-    siteData.contact = {
+  siteData.contact={
 
-      email:
-        document.getElementById("contactEmail")
-          .value.trim(),
+    email:
+      document
+      .getElementById("contactEmail")
+      .value
+      .trim(),
 
-      instagram:
-        document.getElementById("contactInstagram")
-          .value.trim(),
+    instagram:
+      document
+      .getElementById("contactInstagram")
+      .value
+      .trim(),
 
-      phone:
-        document.getElementById("contactPhone")
-          .value.trim()
-    };
+    phone:
+      document
+      .getElementById("contactPhone")
+      .value
+      .trim()
 
-    await saveData();
-  });
+  };
+
+  await saveData();
+
+});
 
 
 /* =========================================
    DELETE SERVICE
 ========================================= */
 
-async function deleteService(index) {
+async function deleteService(index){
 
-  siteData.services.splice(index, 1);
+  if(!confirm(
+    "Delete this service?"
+  )) return;
+
+  siteData.services.splice(
+    index,
+    1
+  );
 
   await saveData();
 
   renderServices();
+
+}
+
+
+/* =========================================
+   EDIT SERVICE
+========================================= */
+
+async function editService(index){
+
+  const item =
+    siteData.services[index];
+
+  const title =
+    prompt(
+      "Service title:",
+      item.title
+    );
+
+  if(title === null) return;
+
+  const text =
+    prompt(
+      "Service description:",
+      item.text
+    );
+
+  if(text === null) return;
+
+  siteData.services[index]={
+    title:title.trim(),
+    text:text.trim()
+  };
+
+  await saveData();
+
+  renderServices();
+
 }
 
 
@@ -729,13 +874,118 @@ async function deleteService(index) {
    DELETE CONTENT
 ========================================= */
 
-async function deleteContent(index) {
+async function deleteContent(index){
 
-  siteData.content.splice(index, 1);
+  if(!confirm(
+    "Delete this content?"
+  )) return;
+
+  siteData.content.splice(
+    index,
+    1
+  );
 
   await saveData();
 
   renderContent();
+
+}
+
+
+/* =========================================
+   EDIT CONTENT
+========================================= */
+
+async function editContent(index){
+
+  const item =
+    siteData.content[index];
+
+  const title =
+    prompt(
+      "Content title:",
+      item.title
+    );
+
+  if(title === null) return;
+
+  const text =
+    prompt(
+      "Content description:",
+      item.text
+    );
+
+  if(text === null) return;
+
+  siteData.content[index]={
+    title:title.trim(),
+    text:text.trim()
+  };
+
+  await saveData();
+
+  renderContent();
+
+}
+
+
+/* =========================================
+   DELETE MEDIA FROM WEBSITE
+========================================= */
+
+async function deleteMedia(index){
+
+  if(!confirm(
+    "Remove this file from your website?"
+  )) return;
+
+  siteData.media.splice(
+    index,
+    1
+  );
+
+  await saveData();
+
+  renderMedia();
+
+}
+
+
+/* =========================================
+   EDIT MEDIA
+========================================= */
+
+async function editMedia(index){
+
+  const item =
+    siteData.media[index];
+
+  const title =
+    prompt(
+      "File title:",
+      item.title || ""
+    );
+
+  if(title === null) return;
+
+  const description =
+    prompt(
+      "File description:",
+      item.description || ""
+    );
+
+  if(description === null) return;
+
+  siteData.media[index]={
+    ...item,
+    title:title.trim(),
+    description:description.trim()
+  };
+
+  await saveData();
+
+  renderMedia();
+
 }
 
 
@@ -743,14 +993,16 @@ async function deleteContent(index) {
    RENDER SERVICES
 ========================================= */
 
-function renderServices() {
+function renderServices(){
 
   const list =
-    document.getElementById("servicesList");
+    document.getElementById(
+      "servicesList"
+    );
 
-  list.innerHTML = "";
+  list.innerHTML="";
 
-  if (!siteData.services.length) {
+  if(!siteData.services.length){
 
     list.innerHTML =
       "<small>No services added.</small>";
@@ -758,25 +1010,56 @@ function renderServices() {
     return;
   }
 
-  siteData.services.forEach((item, index) => {
+  siteData.services.forEach(
+  (item,index)=>{
 
     const div =
       document.createElement("div");
 
-    div.className = "item";
+    div.className="item";
 
-    div.innerHTML = `
-      <h3>${escapeHtml(item.title)}</h3>
-      <p>${escapeHtml(item.text)}</p>
-      <button class="danger">Delete</button>
+    div.innerHTML=`
+
+      <h3>
+        ${escapeHtml(item.title)}
+      </h3>
+
+      <p>
+        ${escapeHtml(item.text)}
+      </p>
+
+      <div class="actions">
+
+        <button
+          class="edit"
+          data-edit="${index}"
+        >
+          Edit
+        </button>
+
+        <button
+          class="danger"
+          data-delete="${index}"
+        >
+          Delete
+        </button>
+
+      </div>
     `;
 
     div
-      .querySelector("button")
-      .addEventListener(
-        "click",
-        () => deleteService(index)
-      );
+    .querySelector("[data-edit]")
+    .addEventListener(
+      "click",
+      ()=>editService(index)
+    );
+
+    div
+    .querySelector("[data-delete]")
+    .addEventListener(
+      "click",
+      ()=>deleteService(index)
+    );
 
     list.appendChild(div);
 
@@ -789,14 +1072,16 @@ function renderServices() {
    RENDER CONTENT
 ========================================= */
 
-function renderContent() {
+function renderContent(){
 
   const list =
-    document.getElementById("contentList");
+    document.getElementById(
+      "contentList"
+    );
 
-  list.innerHTML = "";
+  list.innerHTML="";
 
-  if (!siteData.content.length) {
+  if(!siteData.content.length){
 
     list.innerHTML =
       "<small>No content added.</small>";
@@ -804,25 +1089,56 @@ function renderContent() {
     return;
   }
 
-  siteData.content.forEach((item, index) => {
+  siteData.content.forEach(
+  (item,index)=>{
 
     const div =
       document.createElement("div");
 
-    div.className = "item";
+    div.className="item";
 
-    div.innerHTML = `
-      <h3>${escapeHtml(item.title)}</h3>
-      <p>${escapeHtml(item.text)}</p>
-      <button class="danger">Delete</button>
+    div.innerHTML=`
+
+      <h3>
+        ${escapeHtml(item.title)}
+      </h3>
+
+      <p>
+        ${escapeHtml(item.text)}
+      </p>
+
+      <div class="actions">
+
+        <button
+          class="edit"
+          data-edit="${index}"
+        >
+          Edit
+        </button>
+
+        <button
+          class="danger"
+          data-delete="${index}"
+        >
+          Delete
+        </button>
+
+      </div>
     `;
 
     div
-      .querySelector("button")
-      .addEventListener(
-        "click",
-        () => deleteContent(index)
-      );
+    .querySelector("[data-edit]")
+    .addEventListener(
+      "click",
+      ()=>editContent(index)
+    );
+
+    div
+    .querySelector("[data-delete]")
+    .addEventListener(
+      "click",
+      ()=>deleteContent(index)
+    );
 
     list.appendChild(div);
 
@@ -832,46 +1148,315 @@ function renderContent() {
 
 
 /* =========================================
-   RENDER MEDIA
+   UPLOAD
 ========================================= */
 
-function renderMedia() {
+document
+.getElementById("uploadBtn")
+.addEventListener(
+"click",
+async()=>{
 
-  const list =
-    document.getElementById("mediaList");
+  const file =
+    document
+    .getElementById("mediaFile")
+    .files[0];
 
-  list.innerHTML = "";
+  const title =
+    document
+    .getElementById("mediaTitle")
+    .value
+    .trim();
 
-  if (!siteData.media || !siteData.media.length) {
+  const description =
+    document
+    .getElementById("mediaDescription")
+    .value
+    .trim();
 
-    list.innerHTML =
-      "<small>No uploaded files.</small>";
+  const status =
+    document
+    .getElementById("uploadStatus");
+
+
+  if(!file){
+
+    status.textContent =
+      "Please select a file.";
 
     return;
   }
 
-  siteData.media.forEach((item) => {
+  if(!title){
+
+    status.textContent =
+      "Please enter a title.";
+
+    return;
+  }
+
+
+  status.textContent =
+    "Uploading...";
+
+
+  try{
+
+    const formData =
+      new FormData();
+
+    formData.append(
+      "file",
+      file
+    );
+
+    formData.append(
+      "upload_preset",
+      UPLOAD_PRESET
+    );
+
+
+    const response =
+      await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
+        {
+          method:"POST",
+          body:formData
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        result.error?.message ||
+        "Upload failed."
+      );
+
+    }
+
+
+    const mediaItem={
+
+      title,
+
+      description,
+
+      url:
+        result.secure_url,
+
+      publicId:
+        result.public_id,
+
+      resourceType:
+        result.resource_type,
+
+      format:
+        result.format || "",
+
+      createdAt:
+        new Date().toISOString()
+
+    };
+
+
+    siteData.media.push(
+      mediaItem
+    );
+
+
+    await saveData();
+
+
+    document
+    .getElementById("mediaTitle")
+    .value="";
+
+    document
+    .getElementById("mediaDescription")
+    .value="";
+
+    document
+    .getElementById("mediaFile")
+    .value="";
+
+
+    status.textContent =
+      "✓ Upload successful.";
+
+    renderMedia();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    status.textContent =
+      "Upload failed: "+
+      error.message;
+
+  }
+
+});
+
+
+/* =========================================
+   RENDER MEDIA
+========================================= */
+
+function renderMedia(){
+
+  const list =
+    document.getElementById(
+      "mediaList"
+    );
+
+  list.innerHTML="";
+
+
+  if(!siteData.media.length){
+
+    list.innerHTML =
+      "<small>No uploaded media.</small>";
+
+    return;
+  }
+
+
+  siteData.media.forEach(
+  (item,index)=>{
 
     const div =
       document.createElement("div");
 
-    div.className = "item";
+    div.className="item";
 
-    div.innerHTML = `
-      <h3>${escapeHtml(item.title)}</h3>
+
+    let preview="";
+
+
+    if(
+      item.resourceType === "image"
+    ){
+
+      preview=`
+
+        <img
+          class="media-preview"
+          src="${escapeHtml(item.url)}"
+          alt="${escapeHtml(item.title)}"
+        >
+
+      `;
+
+    }
+
+
+    else if(
+      item.resourceType === "video"
+    ){
+
+      preview=`
+
+        <video
+          class="media-preview"
+          controls
+        >
+
+          <source
+            src="${escapeHtml(item.url)}"
+          >
+
+        </video>
+
+      `;
+
+    }
+
+
+    else{
+
+      preview=`
+
+        <div
+          style="
+            font-size:50px;
+            text-align:center;
+            padding:30px;
+          "
+        >
+          📄
+        </div>
+
+      `;
+
+    }
+
+
+    div.innerHTML=`
+
+      ${preview}
+
+      <h3>
+        ${escapeHtml(item.title)}
+      </h3>
 
       <p>
-        ${escapeHtml(item.description || "")}
+        ${escapeHtml(
+          item.description || ""
+        )}
       </p>
 
-      <a
-        href="${item.url}"
-        target="_blank"
-        rel="noopener"
-      >
-        Open File
-      </a>
+      <div class="actions">
+
+        <a
+          href="${escapeHtml(item.url)}"
+          target="_blank"
+          rel="noopener"
+        >
+          <button>
+            Open
+          </button>
+        </a>
+
+        <button
+          class="edit"
+          data-edit="${index}"
+        >
+          Edit
+        </button>
+
+        <button
+          class="danger"
+          data-delete="${index}"
+        >
+          Remove
+        </button>
+
+      </div>
+
     `;
+
+
+    div
+    .querySelector("[data-edit]")
+    .addEventListener(
+      "click",
+      ()=>editMedia(index)
+    );
+
+
+    div
+    .querySelector("[data-delete]")
+    .addEventListener(
+      "click",
+      ()=>deleteMedia(index)
+    );
+
 
     list.appendChild(div);
 
@@ -884,175 +1469,39 @@ function renderMedia() {
    RENDER ALL
 ========================================= */
 
-function renderAll() {
+function renderAll(){
 
-  document.getElementById("about").value =
+  document
+  .getElementById("about")
+  .value =
     siteData.about || "";
 
-  document.getElementById("contactEmail").value =
-    siteData.contact?.email || "";
 
-  document.getElementById("contactInstagram").value =
-    siteData.contact?.instagram || "";
+  document
+  .getElementById("contactEmail")
+  .value =
+    siteData.contact.email || "";
 
-  document.getElementById("contactPhone").value =
-    siteData.contact?.phone || "";
 
-  if (!Array.isArray(siteData.services))
-    siteData.services = [];
+  document
+  .getElementById("contactInstagram")
+  .value =
+    siteData.contact.instagram || "";
 
-  if (!Array.isArray(siteData.content))
-    siteData.content = [];
 
-  if (!Array.isArray(siteData.media))
-    siteData.media = [];
+  document
+  .getElementById("contactPhone")
+  .value =
+    siteData.contact.phone || "";
+
 
   renderServices();
 
   renderContent();
 
   renderMedia();
+
 }
-
-
-/* =========================================
-   CLOUDINARY UPLOAD
-========================================= */
-
-document
-  .getElementById("uploadBtn")
-  .addEventListener("click", async () => {
-
-    const file =
-      document.getElementById("mediaFile").files[0];
-
-    const title =
-      document.getElementById("mediaTitle")
-        .value.trim();
-
-    const description =
-      document.getElementById("mediaDescription")
-        .value.trim();
-
-    const uploadStatus =
-      document.getElementById("uploadStatus");
-
-
-    if (!file) {
-
-      uploadStatus.textContent =
-        "Please select a file.";
-
-      return;
-    }
-
-
-    if (!title) {
-
-      uploadStatus.textContent =
-        "Please enter a file title.";
-
-      return;
-    }
-
-
-    uploadStatus.textContent =
-      "Uploading...";
-
-
-    try {
-
-      const formData =
-        new FormData();
-
-      formData.append(
-        "file",
-        file
-      );
-
-      formData.append(
-        "upload_preset",
-        UPLOAD_PRESET
-      );
-
-
-      const response =
-        await fetch(
-          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
-          {
-            method: "POST",
-            body: formData
-          }
-        );
-
-
-      const result =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          result.error?.message ||
-          "Cloudinary upload failed."
-        );
-      }
-
-
-      const mediaItem = {
-
-        title,
-
-        description,
-
-        url:
-          result.secure_url,
-
-        publicId:
-          result.public_id,
-
-        resourceType:
-          result.resource_type,
-
-        createdAt:
-          new Date().toISOString()
-      };
-
-
-      if (!Array.isArray(siteData.media)) {
-        siteData.media = [];
-      }
-
-
-      siteData.media.push(mediaItem);
-
-
-      await saveData();
-
-
-      document.getElementById("mediaTitle").value = "";
-
-      document.getElementById("mediaDescription").value = "";
-
-      document.getElementById("mediaFile").value = "";
-
-
-      uploadStatus.textContent =
-        "✓ Upload successful.";
-
-
-      renderMedia();
-
-
-    } catch (error) {
-
-      console.error(error);
-
-      uploadStatus.textContent =
-        "Upload failed: " + error.message;
-    }
-
-  });
 
 
 /* =========================================
@@ -1060,38 +1509,34 @@ document
 ========================================= */
 
 logoutBtn.addEventListener(
-  "click",
-  async () => {
+"click",
+async()=>{
 
-    await signOut(auth);
+  await signOut(auth);
 
-  }
-);
+});
 
 
 /* =========================================
    ESCAPE HTML
 ========================================= */
 
-function escapeHtml(value) {
+function escapeHtml(value){
 
   return String(value ?? "")
-    .replace(
-      /[&<>"']/g,
-      function (char) {
+  .replace(
+    /[&<>"']/g,
+    char=>({
 
-        return {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
 
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
+    }[char])
+  );
 
-        }[char];
-
-      }
-    );
 }
 
 </script>
