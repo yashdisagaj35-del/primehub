@@ -1,597 +1,365 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>PrimeHub</title>
+<meta charset="UTF-8">
 
-  <meta
-    name="description"
-    content="PrimeHub - Creative, Digital & Professional Services"
-  >
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
 
-  <link rel="stylesheet" href="style.css">
+<title>PrimeHub</title>
+
+<link
+rel="stylesheet"
+href="style.css"
+>
+
 </head>
+
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
+
+<!-- NAVBAR -->
 
 <header class="navbar">
 
-  <a href="#home" class="logo">
-    Prime<span>Hub</span>
-  </a>
+<div class="nav-inner">
 
-  <nav class="nav-links">
+<a
+href="#home"
+class="logo">
+PRIME<span>HUB</span>
+</a>
 
-    <a href="#home">Home</a>
-    <a href="#about">About</a>
-    <a href="#services">Services</a>
-    <a href="#content">Content</a>
-    <a href="#media">Media</a>
-    <a href="#contact">Contact</a>
 
-  </nav>
+<nav class="desktop-nav">
 
-  <a href="#contact" class="nav-btn">
-    Let's Connect
-  </a>
+<a href="#home">Home</a>
 
-  <button
-    class="menu-btn"
-    id="menuBtn"
-    aria-label="Open menu"
-  >
-    ☰
-  </button>
+<a href="#about">About</a>
+
+<a href="#services">Services</a>
+
+<a href="#content">Content</a>
+
+<a href="#media">Media</a>
+
+<a href="#contact">Contact</a>
+
+<a href="admin.html">
+🔐 Admin
+</a>
+
+</nav>
+
+
+<button class="menu-toggle">
+☰
+</button>
+
+</div>
+
+
+<div class="mobile-menu">
+
+<a href="#home">Home</a>
+
+<a href="#about">About</a>
+
+<a href="#services">Services</a>
+
+<a href="#content">Content</a>
+
+<a href="#media">Media</a>
+
+<a href="#contact">Contact</a>
+
+<a href="admin.html">
+🔐 Admin
+</a>
+
+</div>
 
 </header>
 
 
-<!-- ================= MOBILE MENU ================= -->
+<!-- HERO -->
 
-<div class="mobile-menu" id="mobileMenu">
+<section
+id="home"
+class="hero"
+>
 
-  <a href="#home">Home</a>
-  <a href="#about">About</a>
-  <a href="#services">Services</a>
-  <a href="#content">Content</a>
-  <a href="#media">Media</a>
-  <a href="#contact">Contact</a>
+<div class="hero-content reveal">
 
-  <a href="admin.html">
-    🔐 Admin
-  </a>
+<span class="eyebrow">
+WELCOME TO
+</span>
+
+<h1>
+PRIME<span>HUB</span>
+</h1>
+
+<p>
+My personal space for creative work,
+notes, photos, videos and useful content.
+</p>
+
+<a
+href="#media"
+class="hero-btn">
+Explore Media
+</a>
+
+</div>
+
+</section>
+
+
+<!-- ABOUT -->
+
+<section
+id="about"
+class="section"
+>
+
+<div class="section-heading reveal">
+
+<span>ABOUT</span>
+
+<h2 id="aboutTitle">
+About Me
+</h2>
 
 </div>
 
 
-<!-- ================= HERO ================= -->
-
-<section class="hero section" id="home">
-
-  <div class="hero-content reveal">
-
-    <div class="badge">
-      ✦ CREATIVE DIGITAL STUDIO
-    </div>
-
-    <h1>
-      Create.<br>
-      Build.<br>
-      <span>Make an Impact.</span>
-    </h1>
-
-    <p>
-      Welcome to PrimeHub — a professional space for
-      creative work, digital services, content and media.
-    </p>
-
-    <div class="hero-buttons">
-
-      <a
-        href="#services"
-        class="btn primary"
-      >
-        Explore Services
-      </a>
-
-      <a
-        href="#media"
-        class="btn secondary"
-      >
-        View Media
-      </a>
-
-    </div>
-
-
-    <div class="stats">
-
-      <div>
-        <strong id="serviceCount">0</strong>
-        <small>Services</small>
-      </div>
-
-      <div>
-        <strong id="contentCount">0</strong>
-        <small>Content</small>
-      </div>
-
-      <div>
-        <strong id="mediaCount">0</strong>
-        <small>Media</small>
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="hero-card reveal">
-
-    <div class="hero-card-inner">
-
-      <span>PRIMEHUB</span>
-
-      <h2>
-        Ideas →<br>
-        Creation →<br>
-        Impact
-      </h2>
-
-      <p>
-        Creative • Digital • Professional
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= BRAND STRIP ================= -->
-
-<section class="brand-strip">
-
-  <div>CREATIVE</div>
-  <div>DIGITAL</div>
-  <div>MEDIA</div>
-  <div>CONTENT</div>
-  <div>PROFESSIONAL</div>
-
-</section>
-
-
-<!-- ================= ABOUT ================= -->
-
-<section
-  class="section"
-  id="about"
+<div
+class="about-box reveal"
 >
 
-  <div class="section-heading reveal">
+<p id="aboutText"></p>
 
-    <span>
-      01 — ABOUT
-    </span>
-
-    <h2>
-      About PrimeHub
-    </h2>
-
-    <p>
-      Discover what PrimeHub is all about.
-    </p>
-
-  </div>
-
-
-  <div
-    class="about-card reveal"
-    id="aboutBox"
-  >
-
-    <div class="about-number">
-      PRIMEHUB
-    </div>
-
-    <div>
-
-      <h3>
-        Loading...
-      </h3>
-
-      <p>
-        Please wait...
-      </p>
-
-    </div>
-
-  </div>
+</div>
 
 </section>
 
 
-<!-- ================= SERVICES ================= -->
+<!-- SERVICES -->
 
 <section
-  class="section soft"
-  id="services"
+id="services"
+class="section section-dark"
 >
 
-  <div class="section-heading reveal">
+<div class="section-heading reveal">
 
-    <span>
-      02 — SERVICES
-    </span>
+<span>SERVICES</span>
 
-    <h2>
-      What We Do
-    </h2>
+<h2>
+What I Do
+</h2>
 
-    <p>
-      Professional services designed to create real impact.
-    </p>
-
-  </div>
+</div>
 
 
-  <div
-    class="grid services-grid"
-    id="servicesList"
-  >
-
-    <div class="loading">
-      Loading services...
-    </div>
-
-  </div>
+<div
+id="servicesList"
+class="services-grid"
+></div>
 
 </section>
 
 
-<!-- ================= CONTENT ================= -->
+<!-- CONTENT -->
 
 <section
-  class="section"
-  id="content"
+id="content"
+class="section"
 >
 
-  <div class="section-heading reveal">
+<div class="section-heading reveal">
 
-    <span>
-      03 — CONTENT
-    </span>
+<span>CONTENT</span>
 
-    <h2>
-      Latest Content
-    </h2>
+<h2>
+My Content
+</h2>
 
-    <p>
-      Ideas, knowledge and useful resources.
-    </p>
-
-  </div>
+</div>
 
 
-  <div
-    class="grid content-grid"
-    id="contentList"
-  >
-
-    <div class="loading">
-      Loading content...
-    </div>
-
-  </div>
+<div
+id="contentList"
+class="content-grid"
+></div>
 
 </section>
 
 
-<!-- ================= MEDIA ================= -->
+<!-- MEDIA -->
 
 <section
-  class="section soft"
-  id="media"
+id="media"
+class="section section-dark"
 >
 
-  <div class="section-heading reveal">
+<div class="section-heading reveal">
 
-    <span>
-      04 — MEDIA
-    </span>
+<span>MEDIA</span>
 
-    <h2>
-      Photo • Video • Notes
-    </h2>
+<h2>
+Photos • Videos • Notes
+</h2>
 
-    <p>
-      Select a category to explore the media.
-    </p>
-
-  </div>
+</div>
 
 
-  <!-- MEDIA TABS -->
+<div class="media-tabs">
 
-  <div class="media-tabs reveal">
+<button
+data-media-filter="all"
+class="active">
+All
+</button>
 
-    <button
-      class="media-tab active"
-      data-filter="all"
-    >
-      All
-    </button>
+<button
+data-media-filter="image">
+Photos
+</button>
 
-    <button
-      class="media-tab"
-      data-filter="image"
-    >
-      📸 Photo
-    </button>
+<button
+data-media-filter="video">
+Videos
+</button>
 
-    <button
-      class="media-tab"
-      data-filter="video"
-    >
-      🎥 Video
-    </button>
+<button
+data-media-filter="raw">
+Notes
+</button>
 
-    <button
-      class="media-tab"
-      data-filter="pdf"
-    >
-      📄 Notes
-    </button>
-
-  </div>
+</div>
 
 
-  <!-- MEDIA LIST -->
-
-  <div
-    class="media-grid"
-    id="mediaList"
-  >
-
-    <div class="loading">
-      Loading media...
-    </div>
-
-  </div>
+<div
+id="mediaGrid"
+class="media-grid"
+></div>
 
 </section>
 
 
-<!-- ================= CONTACT ================= -->
+<!-- CONTACT -->
 
 <section
-  class="section contact-section"
-  id="contact"
+id="contact"
+class="section"
 >
 
-  <div class="section-heading reveal">
+<div class="section-heading reveal">
 
-    <span>
-      05 — CONTACT
-    </span>
+<span>CONTACT</span>
 
-    <h2>
-      Let's Connect
-    </h2>
+<h2>
+Let's Connect
+</h2>
 
-    <p>
-      Have an idea or project? Get in touch.
-    </p>
-
-  </div>
+</div>
 
 
-  <div class="contact-card reveal">
+<div class="contact-box reveal">
+
+<a
+id="contactEmail"
+href="#"
+>
+📧 Email
+</a>
 
 
-    <div class="contact-info">
+<a
+id="contactPhone"
+href="#"
+target="_blank"
+>
+💬 WhatsApp
+</a>
 
 
-      <div class="contact-item">
+<a
+id="contactInstagram"
+href="#"
+target="_blank"
+>
+📷 Instagram
+</a>
 
-        <span class="contact-label">
-          EMAIL
-        </span>
-
-        <a
-          id="emailLink"
-          href="#"
-        >
-          Loading...
-        </a>
-
-      </div>
-
-
-      <div class="contact-item">
-
-        <span class="contact-label">
-          PHONE
-        </span>
-
-        <a
-          id="phoneLink"
-          href="#"
-        >
-          Loading...
-        </a>
-
-      </div>
-
-
-      <div class="contact-item">
-
-        <span class="contact-label">
-          WHATSAPP
-        </span>
-
-        <a
-          id="whatsappLink"
-          href="#"
-          target="_blank"
-          rel="noopener"
-        >
-          Open WhatsApp
-        </a>
-
-      </div>
-
-
-      <div class="contact-item">
-
-        <span class="contact-label">
-          INSTAGRAM
-        </span>
-
-        <a
-          id="instagramLink"
-          href="#"
-          target="_blank"
-          rel="noopener"
-        >
-          Instagram
-        </a>
-
-      </div>
-
-
-    </div>
-
-
-    <div class="contact-action">
-
-      <h3>
-        Start a conversation.
-      </h3>
-
-      <p>
-        Let's discuss your project, idea or collaboration.
-      </p>
-
-      <a
-        href="#"
-        id="contactEmailBtn"
-        class="btn primary"
-      >
-        Send Email →
-      </a>
-
-    </div>
-
-
-  </div>
+</div>
 
 </section>
 
 
-<!-- ================= FOOTER ================= -->
+<!-- FOOTER -->
 
 <footer>
 
+<div>
+© <span id="year"></span>
+PrimeHub. All rights reserved.
+</div>
 
-  <div>
-
-    <strong>
-      Prime<span>Hub</span>
-    </strong>
-
-    <p>
-      Creative • Digital • Professional
-    </p>
-
-  </div>
-
-
-  <div class="footer-links">
-
-    <a href="#home">
-      Home
-    </a>
-
-    <a href="#about">
-      About
-    </a>
-
-    <a href="#services">
-      Services
-    </a>
-
-    <a href="#content">
-      Content
-    </a>
-
-    <a href="#media">
-      Media
-    </a>
-
-    <a href="#contact">
-      Contact
-    </a>
-
-    <!-- ADMIN OPTION -->
-
-    <a
-      href="admin.html"
-      class="admin-link"
-    >
-      🔐 Admin
-    </a>
-
-  </div>
-
-
-  <p class="copyright">
-
-    ©
-    <span id="year"></span>
-    PrimeHub. All rights reserved.
-
-  </p>
-
+<a href="admin.html">
+🔐 Admin
+</a>
 
 </footer>
 
 
-<!-- ================= MEDIA MODAL ================= -->
+<!-- MEDIA MODAL -->
 
 <div
-  class="media-modal"
-  id="mediaModal"
+id="mediaModal"
+class="media-modal"
 >
 
-  <button
-    class="modal-close"
-    id="modalClose"
-    aria-label="Close"
-  >
-    ×
-  </button>
+<div class="modal-box">
+
+<button
+id="mediaModalClose"
+class="modal-close">
+×
+</button>
 
 
-  <div
-    class="modal-content"
-    id="modalContent"
-  ></div>
+<h3 id="mediaModalTitle">
+Media
+</h3>
+
+
+<div id="mediaModalBody"></div>
+
+
+<a
+id="mediaDownload"
+href="#"
+class="download-btn"
+>
+⬇ Download
+</a>
+
+</div>
 
 </div>
 
 
-<!-- ================= JAVASCRIPT ================= -->
-
 <script
-  type="module"
-  src="app.js"
-></script>
+type="module"
+src="app.js">
+</script>
 
 
 </body>
