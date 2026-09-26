@@ -1,17 +1,26 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Yash — PrimeHub</title>
-<meta name="description" content="Yash — Personal, Business and Digital Projects.">
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>PrimeHub — Yash</title>
+
+  <meta
+    name="description"
+    content="Yash — Personal, Portfolio and Business Website."
+  >
+
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header class="nav">
-  <a class="brand" href="#home">YASH<span>.</span></a>
+
+  <a class="brand" href="#home">
+    YASH<span>.</span>
+  </a>
 
   <nav>
     <a href="#home">Home</a>
@@ -21,85 +30,194 @@
     <a href="#contact">Contact</a>
     <a class="admin-link" href="admin.html">Admin</a>
   </nav>
+
 </header>
+
 
 <main>
 
-<section id="home" class="hero">
-  <div>
-    <p class="eyebrow">PERSONAL • BUSINESS • PROJECTS</p>
+  <!-- HOME -->
 
-    <h1>
-      Everything about <span>Yash.</span>
-    </h1>
+  <section id="home" class="hero">
 
-    <p class="lead">
-      A premium digital space for my profile, work, services,
-      documents, photos and future business projects.
-    </p>
+    <div>
 
-    <div class="actions">
-      <a class="btn" href="#services">Explore</a>
-      <a class="btn ghost" href="#contact">Contact</a>
+      <p class="eyebrow">
+        PERSONAL • BUSINESS • PROJECTS
+      </p>
+
+      <h1>
+        Everything about <span>Yash.</span>
+      </h1>
+
+      <p class="lead">
+        A digital space for my profile, work, services,
+        projects, photos, videos and documents.
+      </p>
+
+      <div class="actions">
+
+        <a class="btn" href="#services">
+          Explore
+        </a>
+
+        <a class="btn ghost" href="#contact">
+          Contact
+        </a>
+
+      </div>
+
     </div>
-  </div>
-
-  <div class="hero-card">
-    <div class="orb"></div>
-    <b>PrimeHub</b>
-    <small>Personal + Business</small>
-  </div>
-</section>
 
 
-<section id="about" class="section">
-  <p class="eyebrow">ABOUT</p>
-  <h2>Build your own digital identity.</h2>
+    <div class="hero-card">
 
-  <p class="muted" id="aboutText">
-    This section can be changed from the Admin panel.
-  </p>
-</section>
+      <div class="orb"></div>
 
+      <b>
+        PrimeHub
+      </b>
 
-<section id="services" class="section">
-  <p class="eyebrow">SERVICES</p>
-  <h2>What I do</h2>
+      <small>
+        Personal + Business
+      </small>
 
-  <div id="servicesGrid" class="grid"></div>
-</section>
+    </div>
 
-
-<section id="content" class="section">
-  <p class="eyebrow">CONTENT</p>
-  <h2>My files & updates</h2>
-
-  <div id="contentGrid" class="grid"></div>
-</section>
+  </section>
 
 
-<section id="contact" class="section contact">
+  <!-- ABOUT -->
 
-  <div>
-    <p class="eyebrow">CONTACT</p>
-    <h2>Let's connect.</h2>
+  <section id="about" class="section">
 
-    <p class="muted">
-      Contact details can be managed from the Admin panel.
+    <p class="eyebrow">
+      ABOUT
     </p>
-  </div>
 
-  <div class="contact-card" id="contactCard"></div>
+    <h2>
+      About me
+    </h2>
 
-</section>
+    <p
+      class="muted"
+      id="aboutText"
+    >
+      Loading...
+    </p>
+
+  </section>
+
+
+  <!-- SERVICES -->
+
+  <section id="services" class="section">
+
+    <p class="eyebrow">
+      SERVICES
+    </p>
+
+    <h2>
+      What I do
+    </h2>
+
+    <div
+      id="servicesGrid"
+      class="grid"
+    ></div>
+
+  </section>
+
+
+  <!-- CONTENT -->
+
+  <section id="content" class="section">
+
+    <p class="eyebrow">
+      CONTENT
+    </p>
+
+    <h2>
+      My content
+    </h2>
+
+    <div
+      id="contentGrid"
+      class="grid"
+    ></div>
+
+  </section>
+
+
+  <!-- MEDIA -->
+
+  <section
+    id="media"
+    class="section"
+  >
+
+    <p class="eyebrow">
+      MEDIA
+    </p>
+
+    <h2>
+      Photos, Videos & Documents
+    </h2>
+
+    <div
+      id="mediaGrid"
+      class="grid"
+    ></div>
+
+  </section>
+
+
+  <!-- CONTACT -->
+
+  <section
+    id="contact"
+    class="section contact"
+  >
+
+    <div>
+
+      <p class="eyebrow">
+        CONTACT
+      </p>
+
+      <h2>
+        Let's connect.
+      </h2>
+
+      <p class="muted">
+        Get in touch with me.
+      </p>
+
+    </div>
+
+
+    <div
+      class="contact-card"
+      id="contactCard"
+    ></div>
+
+  </section>
 
 </main>
 
+
 <footer>
-  © <span id="year"></span> Yash. All rights reserved.
+
+  © <span id="year"></span>
+  Yash. All rights reserved.
+
 </footer>
 
-<script type="module" src="app.js"></script>
+
+<script
+  type="module"
+  src="app.js"
+></script>
 
 </body>
 </html>
