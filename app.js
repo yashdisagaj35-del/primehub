@@ -16,7 +16,7 @@ import {
 const firebaseConfig = {
 
   apiKey:
-    "AIzaSyBCx_8R-fGh9Ci4M-0Fk57dQnRfXe74YSY",
+    "AIzaSyBCx_8R-fGh9CiM4-0Fk57dQnRfXe74YSY",
 
   authDomain:
     "primehub-12dde.firebaseapp.com",
@@ -35,7 +35,6 @@ const firebaseConfig = {
 
   measurementId:
     "G-878ZB4S1LP"
-
 };
 
 
@@ -43,11 +42,14 @@ const firebaseConfig = {
    FIREBASE
 ========================================= */
 
-const app =
-  initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const db =
-  getFirestore(app);
+const dataRef = doc(
+  db,
+  "siteData",
+  "main"
+);
 
 
 /* =========================================
@@ -60,36 +62,29 @@ const defaultData = {
     "Welcome to PrimeHub — my personal and business digital space.",
 
   services: [
-
     {
       title: "Video Editing",
       text: "Professional short-form and video editing."
     },
-
     {
       title: "Creative Work",
       text: "Design, content and digital projects."
     },
-
     {
       title: "Business",
       text: "A space for services and future business ideas."
     }
-
   ],
 
   content: [],
 
   contact: {
-
     email: "",
     instagram: "",
     phone: ""
-
   },
 
   media: []
-
 };
 
 
@@ -103,40 +98,121 @@ function esc(value) {
     .replace(
       /[&<>"']/g,
       m => ({
-
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#039;"
-
       }[m])
     );
-
 }
 
 
 /* =========================================
-   GET FIREBASE DATA
+   SAFE URL
+========================================= */
+
+function safeUrl(value) {
+
+  try {
+
+    const url =
+      new URL(value);
+
+    if (
+      url.protocol === "http:" ||
+      url.protocol === "https:"
+    ) {
+      return url.href;
+    }
+
+  } catch {}
+
+  return "";
+}
+
+
+/* =========================================
+   INSTAGRAM URL
+========================================= */
+
+function instagramUrl(value) {
+
+  if (!value) return "";
+
+  const clean =
+    String(value).trim();
+
+  if (
+    clean.startsWith("http://") ||
+    clean.startsWith("https://")
+  ) {
+    return safeUrl(clean);
+  }
+
+  const username =
+    clean
+      .replace("@", "")
+      .replace(/\s/g, "");
+
+  return username
+    ? `https://instagram.com/${encodeURIComponent(username)}`
+    : "";
+}
+
+
+/* =========================================
+   WHATSAPP URL
+========================================= */
+
+function whatsappUrl(value) {
+
+  if (!value) return "";
+
+  const phone =
+    String(value)
+      .replace(/[^\d]/g, "");
+
+  if (!phone) return "";
+
+  return `https://wa.me/${phone}`;
+}
+
+
+/* =========================================
+   GET DATA
 ========================================= */
 
 async function getData() {
 
   try {
 
-    const ref =
-      doc(db, "siteData", "main");
-
     const snapshot =
-      await getDoc(ref);
+      await getDoc(dataRef);
 
     if (snapshot.exists()) {
 
+      const firebaseData =
+        snapshot.data();
+
       return {
         ...defaultData,
-        ...snapshot.data()
+        ...firebaseData,
+        services:
+          Array.isArray(firebaseData.services)
+            ? firebaseData.services
+            : [],
+        content:
+          Array.isArray(firebaseData.content)
+            ? firebaseData.content
+            : [],
+        media:
+          Array.isArray(firebaseData.media)
+            ? firebaseData.media
+            : [],
+        contact:
+          firebaseData.contact || defaultData.contact
       };
-
     }
 
     return defaultData;
@@ -149,9 +225,7 @@ async function getData() {
     );
 
     return defaultData;
-
   }
-
 }
 
 
@@ -177,7 +251,6 @@ async function render() {
     aboutText.textContent =
       data.about ||
       defaultData.about;
-
   }
 
 
@@ -191,36 +264,43 @@ async function render() {
   if (servicesGrid) {
 
     const services =
-      Array.isArray(data.services)
-        ? data.services
-        : [];
+      data.services;
 
     if (!services.length) {
 
       servicesGrid.innerHTML =
-        "<p class='muted'>No services added yet.</p>";
+        `<p class="muted">
+          No services added yet.
+        </p>`;
 
     } else {
 
       servicesGrid.innerHTML =
-        services.map(item => `
+        services.map(
+          (item, index) => `
 
-          <article class="card">
+            <article
+              class="service-card reveal"
+              style="--delay:${index * 80}ms"
+            >
 
-            <h3>
-              ${esc(item.title)}
-            </h3>
+              <div class="service-icon">
+                ${serviceIcon(index)}
+              </div>
 
-            <p>
-              ${esc(item.text)}
-            </p>
+              <h3>
+                ${esc(item.title)}
+              </h3>
 
-          </article>
+              <p>
+                ${esc(item.text)}
+              </p>
 
-        `).join("");
+            </article>
 
+          `
+        ).join("");
     }
-
   }
 
 
@@ -234,36 +314,43 @@ async function render() {
   if (contentGrid) {
 
     const content =
-      Array.isArray(data.content)
-        ? data.content
-        : [];
+      data.content;
 
     if (!content.length) {
 
       contentGrid.innerHTML =
-        "<p class='muted'>No content added yet.</p>";
+        `<p class="muted">
+          No content added yet.
+        </p>`;
 
     } else {
 
       contentGrid.innerHTML =
-        content.map(item => `
+        content.map(
+          (item, index) => `
 
-          <article class="card">
+            <article
+              class="content-card reveal"
+              style="--delay:${index * 80}ms"
+            >
 
-            <h3>
-              ${esc(item.title)}
-            </h3>
+              <span class="card-number">
+                ${String(index + 1).padStart(2, "0")}
+              </span>
 
-            <p>
-              ${esc(item.text)}
-            </p>
+              <h3>
+                ${esc(item.title)}
+              </h3>
 
-          </article>
+              <p>
+                ${esc(item.text)}
+              </p>
 
-        `).join("");
+            </article>
 
+          `
+        ).join("");
     }
-
   }
 
 
@@ -274,80 +361,179 @@ async function render() {
 
   /* CONTACT */
 
-  const contactCard =
-    document.getElementById(
-      "contactCard"
-    );
-
-  if (contactCard) {
-
-    const contact =
-      data.contact ||
-      defaultData.contact;
-
-    contactCard.innerHTML = `
-
-      ${
-        contact.email
-          ? `
-            <p>
-              <b>Email:</b>
-              <a
-                href="mailto:${esc(contact.email)}"
-              >
-                ${esc(contact.email)}
-              </a>
-            </p>
-          `
-          : ""
-      }
-
-      ${
-        contact.instagram
-          ? `
-            <p>
-              <b>Instagram:</b>
-              ${esc(contact.instagram)}
-            </p>
-          `
-          : ""
-      }
-
-      ${
-        contact.phone
-          ? `
-            <p>
-              <b>Phone:</b>
-              ${esc(contact.phone)}
-            </p>
-          `
-          : ""
-      }
-
-    `;
-
-  }
+  renderContact(data.contact);
 
 
   /* YEAR */
 
   const year =
-    document.getElementById(
-      "year"
-    );
+    document.getElementById("year");
 
   if (year) {
 
     year.textContent =
       new Date().getFullYear();
-
   }
 
+
+  setupReveal();
 }
 
 
 /* =========================================
-   MEDIA RENDER
+   SERVICE ICON
+========================================= */
+
+function serviceIcon(index) {
+
+  const icons = [
+    "✦",
+    "◈",
+    "◆",
+    "✧",
+    "●",
+    "◇"
+  ];
+
+  return icons[index % icons.length];
+}
+
+
+/* =========================================
+   CONTACT
+========================================= */
+
+function renderContact(contact) {
+
+  const contactCard =
+    document.getElementById(
+      "contactCard"
+    );
+
+  if (!contactCard) return;
+
+  const email =
+    String(contact?.email || "").trim();
+
+  const instagram =
+    String(contact?.instagram || "").trim();
+
+  const phone =
+    String(contact?.phone || "").trim();
+
+
+  let html = "";
+
+
+  if (email) {
+
+    html += `
+
+      <div class="contact-item">
+
+        <span class="contact-label">
+          Email
+        </span>
+
+        <div class="contact-value">
+          <a href="mailto:${esc(email)}">
+            ${esc(email)}
+          </a>
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  if (phone) {
+
+    html += `
+
+      <div class="contact-item">
+
+        <span class="contact-label">
+          WhatsApp / Phone
+        </span>
+
+        <div class="contact-value">
+          <a
+            href="${esc(whatsappUrl(phone))}"
+            target="_blank"
+            rel="noopener"
+          >
+            ${esc(phone)}
+          </a>
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  if (instagram) {
+
+    const ig =
+      instagramUrl(instagram);
+
+    html += `
+
+      <div class="contact-item">
+
+        <span class="contact-label">
+          Instagram
+        </span>
+
+        <div class="contact-value">
+
+          ${
+            ig
+              ? `
+                <a
+                  href="${esc(ig)}"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  ${esc(instagram)}
+                </a>
+              `
+              : esc(instagram)
+          }
+
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  if (!html) {
+
+    html = `
+
+      <div class="contact-empty">
+
+        <span>CONTACT</span>
+
+        <p>
+          Contact details will be added soon.
+        </p>
+
+      </div>
+
+    `;
+  }
+
+
+  contactCard.innerHTML = html;
+}
+
+
+/* =========================================
+   MEDIA
 ========================================= */
 
 function renderMedia(media) {
@@ -360,164 +546,293 @@ function renderMedia(media) {
   if (!mediaGrid) return;
 
 
-  if (!Array.isArray(media) ||
-      media.length === 0) {
+  if (
+    !Array.isArray(media) ||
+    media.length === 0
+  ) {
 
-    mediaGrid.innerHTML = `
-      <p class="muted">
+    mediaGrid.innerHTML =
+      `<p class="muted">
         No media uploaded yet.
-      </p>
-    `;
+      </p>`;
 
     return;
-
   }
 
 
   mediaGrid.innerHTML =
-    media.map(item => {
+    media.map(
+      (item, index) => {
 
-      const url =
-        esc(item.url);
+        const url =
+          esc(item.url || "");
 
-      const title =
-        esc(item.title);
+        const title =
+          esc(item.title || "Untitled");
 
-      const description =
-        esc(item.description || "");
+        const description =
+          esc(item.description || "");
 
-      const type =
-        item.resourceType || "";
+        const type =
+          item.resourceType || "";
 
-
-      /* IMAGE */
-
-      if (
-        type === "image" ||
-        /\.(jpg|jpeg|png|gif|webp|avif)$/i.test(
-          item.url || ""
-        )
-      ) {
-
-        return `
-
-          <article class="card media-card">
-
-            <img
-              src="${url}"
-              alt="${title}"
-              loading="lazy"
-              style="
-                width:100%;
-                border-radius:12px;
-                display:block;
-              "
-            >
-
-            <h3>
-              ${title}
-            </h3>
-
-            ${
-              description
-                ? `<p>${description}</p>`
-                : ""
-            }
-
-            <a
-              href="${url}"
-              target="_blank"
-              rel="noopener"
-            >
-              Open image
-            </a>
-
-          </article>
-
-        `;
-
-      }
+        let preview = "";
 
 
-      /* VIDEO */
+        /* IMAGE */
 
-      if (
-        type === "video" ||
-        /\.(mp4|webm|mov|m4v)$/i.test(
-          item.url || ""
-        )
-      ) {
+        if (
+          type === "image" ||
+          /\.(jpg|jpeg|png|gif|webp|avif)$/i
+            .test(item.url || "")
+        ) {
 
-        return `
+          preview = `
 
-          <article class="card media-card">
+            <div class="media-preview">
 
-            <video
-              controls
-              preload="metadata"
-              style="
-                width:100%;
-                border-radius:12px;
-                display:block;
-              "
-            >
-
-              <source
+              <img
                 src="${url}"
+                alt="${title}"
+                loading="lazy"
               >
 
-              Your browser does not support video.
+            </div>
 
-            </video>
+          `;
+        }
 
-            <h3>
-              ${title}
-            </h3>
 
-            ${
-              description
-                ? `<p>${description}</p>`
-                : ""
-            }
+        /* VIDEO */
+
+        else if (
+          type === "video" ||
+          /\.(mp4|webm|mov|m4v)$/i
+            .test(item.url || "")
+        ) {
+
+          preview = `
+
+            <div class="media-preview">
+
+              <video
+                controls
+                preload="metadata"
+              >
+
+                <source
+                  src="${url}"
+                >
+
+                Your browser does not support video.
+
+              </video>
+
+            </div>
+
+          `;
+        }
+
+
+        /* PDF */
+
+        else {
+
+          preview = `
+
+            <div class="media-preview pdf-preview">
+
+              <div>
+                📄
+                <small>DOCUMENT</small>
+              </div>
+
+            </div>
+
+          `;
+        }
+
+
+        return `
+
+          <article
+            class="media-card reveal"
+            style="--delay:${index * 80}ms"
+          >
+
+            ${preview}
+
+            <div class="media-info">
+
+              <h3>
+                ${title}
+              </h3>
+
+              ${
+                description
+                  ? `<p>${description}</p>`
+                  : ""
+              }
+
+              <a
+                href="${url}"
+                target="_blank"
+                rel="noopener"
+              >
+                ${
+                  type === "video"
+                    ? "Open video →"
+                    : type === "image"
+                    ? "Open image →"
+                    : "Open document →"
+                }
+              </a>
+
+            </div>
 
           </article>
 
         `;
-
       }
+    ).join("");
 
 
-      /* PDF / OTHER */
+  setupReveal();
+}
 
-      return `
 
-        <article class="card media-card">
+/* =========================================
+   SCROLL REVEAL
+========================================= */
 
-          <h3>
-            📄 ${title}
-          </h3>
+function setupReveal() {
 
-          ${
-            description
-              ? `<p>${description}</p>`
-              : ""
+  const elements =
+    document.querySelectorAll(
+      ".reveal:not(.visible)"
+    );
+
+  if (!elements.length) return;
+
+
+  if (!("IntersectionObserver" in window)) {
+
+    elements.forEach(
+      el => el.classList.add("visible")
+    );
+
+    return;
+  }
+
+
+  const observer =
+    new IntersectionObserver(
+      entries => {
+
+        entries.forEach(
+          entry => {
+
+            if (
+              entry.isIntersecting
+            ) {
+
+              const delay =
+                entry.target.style
+                  .getPropertyValue("--delay");
+
+              if (delay) {
+
+                entry.target.style.transitionDelay =
+                  delay;
+              }
+
+              entry.target.classList.add(
+                "visible"
+              );
+
+              observer.unobserve(
+                entry.target
+              );
+            }
           }
+        );
 
-          <a
-            class="btn"
-            href="${url}"
-            target="_blank"
-            rel="noopener"
-          >
-            Open document
-          </a>
+      },
+      {
+        threshold: 0.12
+      }
+    );
 
-        </article>
 
-      `;
+  elements.forEach(
+    element =>
+      observer.observe(element)
+  );
+}
 
-    }).join("");
 
+/* =========================================
+   MOBILE MENU
+========================================= */
+
+const menuBtn =
+  document.getElementById(
+    "menuBtn"
+  );
+
+const mainNav =
+  document.getElementById(
+    "mainNav"
+  );
+
+
+if (menuBtn && mainNav) {
+
+  menuBtn.addEventListener(
+    "click",
+    () => {
+
+      const open =
+        mainNav.classList.toggle(
+          "mobile-open"
+        );
+
+      menuBtn.classList.toggle(
+        "active",
+        open
+      );
+
+      menuBtn.setAttribute(
+        "aria-expanded",
+        String(open)
+      );
+    }
+  );
+
+
+  mainNav
+    .querySelectorAll("a")
+    .forEach(link => {
+
+      link.addEventListener(
+        "click",
+        () => {
+
+          mainNav.classList.remove(
+            "mobile-open"
+          );
+
+          menuBtn.classList.remove(
+            "active"
+          );
+
+          menuBtn.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+        }
+      );
+    });
 }
 
 
