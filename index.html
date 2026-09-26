@@ -1,223 +1,266 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>PrimeHub — Yash</title>
+  <title>PrimeHub — Digital Portfolio</title>
+  <meta name="description" content="PrimeHub — Professional digital portfolio, services, content and media.">
 
-  <meta
-    name="description"
-    content="Yash — Personal, Portfolio and Business Website."
-  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header class="nav">
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
 
-  <a class="brand" href="#home">
-    YASH<span>.</span>
-  </a>
+      <a href="#home" class="logo">
+        <span class="logo-mark">P</span>
+        <span>Prime<span>Hub</span></span>
+      </a>
 
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#about">About</a>
-    <a href="#services">Services</a>
-    <a href="#content">Content</a>
-    <a href="#contact">Contact</a>
-    <a class="admin-link" href="admin.html">Admin</a>
-  </nav>
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#content">Content</a>
+        <a href="#media">Media</a>
+        <a href="#contact">Contact</a>
+      </nav>
 
-</header>
+      <a href="#contact" class="nav-button">Let's Connect</a>
+
+    </div>
+  </header>
 
 
-<main>
+  <!-- HERO -->
+  <main>
 
-  <!-- HOME -->
+    <section id="home" class="hero">
 
-  <section id="home" class="hero">
+      <div class="hero-glow glow-one"></div>
+      <div class="hero-glow glow-two"></div>
 
-    <div>
+      <div class="hero-content">
 
-      <p class="eyebrow">
-        PERSONAL • BUSINESS • PROJECTS
-      </p>
+        <div class="badge">
+          <span class="dot"></span>
+          Welcome to PrimeHub
+        </div>
 
-      <h1>
-        Everything about <span>Yash.</span>
-      </h1>
+        <h1>
+          Create. <span>Build.</span><br>
+          Make an Impact.
+        </h1>
 
-      <p class="lead">
-        A digital space for my profile, work, services,
-        projects, photos, videos and documents.
-      </p>
+        <p>
+          A modern digital space for showcasing services, ideas,
+          creative work, content and professional projects.
+        </p>
 
-      <div class="actions">
+        <div class="hero-buttons">
+          <a href="#services" class="primary-button">
+            Explore Services <span>→</span>
+          </a>
 
-        <a class="btn" href="#services">
-          Explore
-        </a>
+          <a href="#media" class="secondary-button">
+            View Media
+          </a>
+        </div>
 
-        <a class="btn ghost" href="#contact">
-          Contact
-        </a>
+        <div class="hero-stats">
+          <div>
+            <strong>01</strong>
+            <span>Creative</span>
+          </div>
 
+          <div>
+            <strong>02</strong>
+            <span>Professional</span>
+          </div>
+
+          <div>
+            <strong>03</strong>
+            <span>Digital</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="hero-visual">
+        <div class="visual-card">
+
+          <div class="visual-top">
+            <span>PRIMEHUB</span>
+            <span>✦</span>
+          </div>
+
+          <div class="visual-center">
+            <div class="big-letter">P</div>
+          </div>
+
+          <div class="visual-bottom">
+            <span>CREATIVE</span>
+            <span>DIGITAL</span>
+            <span>2026</span>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+    <section id="about" class="section">
+
+      <div class="section-heading">
+        <span class="eyebrow">ABOUT</span>
+        <h2>About <span>PrimeHub</span></h2>
+        <p>
+          Discover more about the work, vision and journey behind PrimeHub.
+        </p>
+      </div>
+
+      <div class="about-card">
+        <div class="about-number">01</div>
+        <div id="aboutText" class="about-text">
+          Loading...
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- SERVICES -->
+    <section id="services" class="section section-dark">
+
+      <div class="section-heading">
+        <span class="eyebrow">WHAT I DO</span>
+        <h2>My <span>Services</span></h2>
+        <p>
+          Professional services designed to turn ideas into useful digital experiences.
+        </p>
+      </div>
+
+      <div id="servicesGrid" class="services-grid">
+        <div class="loading">Loading services...</div>
+      </div>
+
+    </section>
+
+
+    <!-- CONTENT -->
+    <section id="content" class="section">
+
+      <div class="section-heading">
+        <span class="eyebrow">CONTENT</span>
+        <h2>Latest <span>Content</span></h2>
+        <p>
+          Explore thoughts, projects, information and creative content.
+        </p>
+      </div>
+
+      <div id="contentGrid" class="content-grid">
+        <div class="loading">Loading content...</div>
+      </div>
+
+    </section>
+
+
+    <!-- MEDIA -->
+    <section id="media" class="section section-dark">
+
+      <div class="section-heading">
+        <span class="eyebrow">PORTFOLIO</span>
+        <h2>Photos, Videos <span>& Documents</span></h2>
+        <p>
+          A collection of uploaded media and important documents.
+        </p>
+      </div>
+
+      <div id="mediaGrid" class="media-grid">
+        <div class="loading">Loading media...</div>
+      </div>
+
+    </section>
+
+
+    <!-- CONTACT -->
+    <section id="contact" class="section contact-section">
+
+      <div class="contact-card">
+
+        <div class="contact-left">
+          <span class="eyebrow">GET IN TOUCH</span>
+
+          <h2>
+            Let's create something<br>
+            <span>great together.</span>
+          </h2>
+
+          <p>
+            Have a project, idea or collaboration in mind?
+            Get in touch and let's talk.
+          </p>
+        </div>
+
+        <div id="contactCard" class="contact-right">
+          Loading...
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <div class="footer-inner">
+
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-mark">P</span>
+          <span>Prime<span>Hub</span></span>
+        </div>
+
+        <p>
+          Creative • Digital • Professional
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#media">Media</a>
+        <a href="#contact">Contact</a>
+      </div>
+
+      <div class="footer-admin">
+        <a href="admin.html">Admin</a>
       </div>
 
     </div>
 
-
-    <div class="hero-card">
-
-      <div class="orb"></div>
-
-      <b>
-        PrimeHub
-      </b>
-
-      <small>
-        Personal + Business
-      </small>
-
+    <div class="copyright">
+      © <span id="year"></span> PrimeHub. All rights reserved.
     </div>
 
-  </section>
+  </footer>
 
 
-  <!-- ABOUT -->
-
-  <section id="about" class="section">
-
-    <p class="eyebrow">
-      ABOUT
-    </p>
-
-    <h2>
-      About me
-    </h2>
-
-    <p
-      class="muted"
-      id="aboutText"
-    >
-      Loading...
-    </p>
-
-  </section>
-
-
-  <!-- SERVICES -->
-
-  <section id="services" class="section">
-
-    <p class="eyebrow">
-      SERVICES
-    </p>
-
-    <h2>
-      What I do
-    </h2>
-
-    <div
-      id="servicesGrid"
-      class="grid"
-    ></div>
-
-  </section>
-
-
-  <!-- CONTENT -->
-
-  <section id="content" class="section">
-
-    <p class="eyebrow">
-      CONTENT
-    </p>
-
-    <h2>
-      My content
-    </h2>
-
-    <div
-      id="contentGrid"
-      class="grid"
-    ></div>
-
-  </section>
-
-
-  <!-- MEDIA -->
-
-  <section
-    id="media"
-    class="section"
-  >
-
-    <p class="eyebrow">
-      MEDIA
-    </p>
-
-    <h2>
-      Photos, Videos & Documents
-    </h2>
-
-    <div
-      id="mediaGrid"
-      class="grid"
-    ></div>
-
-  </section>
-
-
-  <!-- CONTACT -->
-
-  <section
-    id="contact"
-    class="section contact"
-  >
-
-    <div>
-
-      <p class="eyebrow">
-        CONTACT
-      </p>
-
-      <h2>
-        Let's connect.
-      </h2>
-
-      <p class="muted">
-        Get in touch with me.
-      </p>
-
-    </div>
-
-
-    <div
-      class="contact-card"
-      id="contactCard"
-    ></div>
-
-  </section>
-
-</main>
-
-
-<footer>
-
-  © <span id="year"></span>
-  Yash. All rights reserved.
-
-</footer>
-
-
-<script
-  type="module"
-  src="app.js"
-></script>
+  <script type="module" src="app.js"></script>
 
 </body>
 </html>
