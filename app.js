@@ -9,753 +9,681 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 
-/* =========================================
-   FIREBASE CONFIG
-========================================= */
+/* ==============================
+   FIREBASE
+================================ */
 
 const firebaseConfig = {
-
-  apiKey:
-    "AIzaSyBCx_8R-fGh9CiM4-0Fk57dQnRfXe74YSY",
-
-  authDomain:
-    "primehub-12dde.firebaseapp.com",
-
-  projectId:
-    "primehub-12dde",
-
-  storageBucket:
-    "primehub-12dde.firebasestorage.app",
-
-  messagingSenderId:
-    "1081645394839",
-
-  appId:
-    "1:1081645394839:web:796cc1c3de6d1ce201b2d2",
-
-  measurementId:
-    "G-878ZB4S1LP"
+  apiKey: "AIzaSyBCx8_8R-fGh9CiM4-0Fk57dQnRfXe74YSY",
+  authDomain: "primehub-12dde.firebaseapp.com",
+  projectId: "primehub-12dde",
+  storageBucket: "primehub-12dde.firebasestorage.app",
+  messagingSenderId: "1081645394839",
+  appId: "1:1081645394839:web:796cc1c3de6d1ce201b2d2",
+  measurementId: "G-878ZB4S1LP"
 };
-
-
-/* =========================================
-   FIREBASE
-========================================= */
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const dataRef = doc(
-  db,
-  "siteData",
-  "main"
-);
 
+/* ==============================
+   HELPERS
+================================ */
 
-/* =========================================
-   DEFAULT DATA
-========================================= */
-
-const defaultData = {
-
-  about:
-    "Welcome to PrimeHub — my personal and business digital space.",
-
-  services: [
-    {
-      title: "Video Editing",
-      text: "Professional short-form and video editing."
-    },
-    {
-      title: "Creative Work",
-      text: "Design, content and digital projects."
-    },
-    {
-      title: "Business",
-      text: "A space for services and future business ideas."
-    }
-  ],
-
-  content: [],
-
-  contact: {
-    email: "",
-    instagram: "",
-    phone: ""
-  },
-
-  media: []
-};
-
-
-/* =========================================
-   ESCAPE HTML
-========================================= */
-
-function esc(value) {
-
-  return String(value ?? "")
-    .replace(
-      /[&<>"']/g,
-      m => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[m])
-    );
+function esc(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 
-/* =========================================
-   SAFE URL
-========================================= */
-
-function safeUrl(value) {
+function safeUrl(value = "") {
 
   try {
-
-    const url =
-      new URL(value);
+    const url = new URL(value);
 
     if (
-      url.protocol === "http:" ||
-      url.protocol === "https:"
+      url.protocol === "https:" ||
+      url.protocol === "http:"
     ) {
       return url.href;
     }
 
   } catch {}
 
-  return "";
+  return "#";
 }
 
 
-/* =========================================
-   INSTAGRAM URL
-========================================= */
+function normalizeType(item) {
 
-function instagramUrl(value) {
+  const type = String(
+    item.type ||
+    item.resourceType ||
+    ""
+  ).toLowerCase();
 
-  if (!value) return "";
-
-  const clean =
-    String(value).trim();
+  const url = String(item.url || "").toLowerCase();
 
   if (
-    clean.startsWith("http://") ||
-    clean.startsWith("https://")
+    type === "image" ||
+    type === "photo" ||
+    /\.(jpg|jpeg|png|gif|webp|avif)$/i.test(url)
   ) {
-    return safeUrl(clean);
+    return "image";
   }
 
-  const username =
-    clean
-      .replace("@", "")
-      .replace(/\s/g, "");
+  if (
+    type === "video" ||
+    /\.(mp4|webm|mov|mkv)$/i.test(url)
+  ) {
+    return "video";
+  }
 
-  return username
-    ? `https://instagram.com/${encodeURIComponent(username)}`
-    : "";
+  return "pdf";
 }
 
 
-/* =========================================
-   WHATSAPP URL
-========================================= */
+/* ==============================
+   ABOUT
+================================ */
 
-function whatsappUrl(value) {
+function renderAbout(data) {
 
-  if (!value) return "";
+  const box = document.getElementById("aboutBox");
 
-  const phone =
-    String(value)
-      .replace(/[^\d]/g, "");
+  const title = data.about?.title || "Creative. Digital. Professional.";
 
-  if (!phone) return "";
+  const text =
+    data.about?.text ||
+    "PrimeHub is a creative digital platform focused on professional work, content and media.";
 
-  return `https://wa.me/${phone}`;
+  box.innerHTML = `
+    <div class="about-number">PRIMEHUB</div>
+
+    <div>
+      <h3>${esc(title)}</h3>
+      <p>${esc(text)}</p>
+    </div>
+  `;
 }
 
 
-/* =========================================
-   GET DATA
-========================================= */
+/* ==============================
+   SERVICES
+================================ */
 
-async function getData() {
+function renderServices(data) {
 
-  try {
+  const list = document.getElementById("servicesList");
 
-    const snapshot =
-      await getDoc(dataRef);
+  const services = Array.isArray(data.services)
+    ? data.services
+    : [];
 
-    if (snapshot.exists()) {
+  document.getElementById("serviceCount").textContent =
+    services.length;
 
-      const firebaseData =
-        snapshot.data();
+  if (!services.length) {
 
-      return {
-        ...defaultData,
-        ...firebaseData,
-        services:
-          Array.isArray(firebaseData.services)
-            ? firebaseData.services
-            : [],
-        content:
-          Array.isArray(firebaseData.content)
-            ? firebaseData.content
-            : [],
-        media:
-          Array.isArray(firebaseData.media)
-            ? firebaseData.media
-            : [],
-        contact:
-          firebaseData.contact || defaultData.contact
-      };
-    }
+    list.innerHTML = `
+      <div class="empty">
+        No services added yet.
+      </div>
+    `;
 
-    return defaultData;
-
-  } catch (error) {
-
-    console.error(
-      "Firebase error:",
-      error
-    );
-
-    return defaultData;
-  }
-}
-
-
-/* =========================================
-   RENDER
-========================================= */
-
-async function render() {
-
-  const data =
-    await getData();
-
-
-  /* ABOUT */
-
-  const aboutText =
-    document.getElementById(
-      "aboutText"
-    );
-
-  if (aboutText) {
-
-    aboutText.textContent =
-      data.about ||
-      defaultData.about;
+    return;
   }
 
+  list.innerHTML = services.map((item, index) => {
 
-  /* SERVICES */
+    const title = item.title || item.name || "Service";
+    const description = item.description || "";
 
-  const servicesGrid =
-    document.getElementById(
-      "servicesGrid"
-    );
+    return `
+      <article class="service-card reveal">
 
-  if (servicesGrid) {
-
-    const services =
-      data.services;
-
-    if (!services.length) {
-
-      servicesGrid.innerHTML =
-        `<p class="muted">
-          No services added yet.
-        </p>`;
-
-    } else {
-
-      servicesGrid.innerHTML =
-        services.map(
-          (item, index) => `
-
-            <article
-              class="service-card reveal"
-              style="--delay:${index * 80}ms"
-            >
-
-              <div class="service-icon">
-                ${serviceIcon(index)}
-              </div>
-
-              <h3>
-                ${esc(item.title)}
-              </h3>
-
-              <p>
-                ${esc(item.text)}
-              </p>
-
-            </article>
-
-          `
-        ).join("");
-    }
-  }
-
-
-  /* CONTENT */
-
-  const contentGrid =
-    document.getElementById(
-      "contentGrid"
-    );
-
-  if (contentGrid) {
-
-    const content =
-      data.content;
-
-    if (!content.length) {
-
-      contentGrid.innerHTML =
-        `<p class="muted">
-          No content added yet.
-        </p>`;
-
-    } else {
-
-      contentGrid.innerHTML =
-        content.map(
-          (item, index) => `
-
-            <article
-              class="content-card reveal"
-              style="--delay:${index * 80}ms"
-            >
-
-              <span class="card-number">
-                ${String(index + 1).padStart(2, "0")}
-              </span>
-
-              <h3>
-                ${esc(item.title)}
-              </h3>
-
-              <p>
-                ${esc(item.text)}
-              </p>
-
-            </article>
-
-          `
-        ).join("");
-    }
-  }
-
-
-  /* MEDIA */
-
-  renderMedia(data.media);
-
-
-  /* CONTACT */
-
-  renderContact(data.contact);
-
-
-  /* YEAR */
-
-  const year =
-    document.getElementById("year");
-
-  if (year) {
-
-    year.textContent =
-      new Date().getFullYear();
-  }
-
-
-  setupReveal();
-}
-
-
-/* =========================================
-   SERVICE ICON
-========================================= */
-
-function serviceIcon(index) {
-
-  const icons = [
-    "✦",
-    "◈",
-    "◆",
-    "✧",
-    "●",
-    "◇"
-  ];
-
-  return icons[index % icons.length];
-}
-
-
-/* =========================================
-   CONTACT
-========================================= */
-
-function renderContact(contact) {
-
-  const contactCard =
-    document.getElementById(
-      "contactCard"
-    );
-
-  if (!contactCard) return;
-
-  const email =
-    String(contact?.email || "").trim();
-
-  const instagram =
-    String(contact?.instagram || "").trim();
-
-  const phone =
-    String(contact?.phone || "").trim();
-
-
-  let html = "";
-
-
-  if (email) {
-
-    html += `
-
-      <div class="contact-item">
-
-        <span class="contact-label">
-          Email
-        </span>
-
-        <div class="contact-value">
-          <a href="mailto:${esc(email)}">
-            ${esc(email)}
-          </a>
+        <div class="card-number">
+          ${String(index + 1).padStart(2, "0")}
         </div>
 
-      </div>
+        <h3>${esc(title)}</h3>
 
+        <p>${esc(description)}</p>
+
+        <span class="card-arrow">↗</span>
+
+      </article>
     `;
+
+  }).join("");
+
+}
+
+
+/* ==============================
+   CONTENT
+================================ */
+
+function renderContent(data) {
+
+  const list = document.getElementById("contentList");
+
+  const content = Array.isArray(data.content)
+    ? data.content
+    : [];
+
+  document.getElementById("contentCount").textContent =
+    content.length;
+
+  if (!content.length) {
+
+    list.innerHTML = `
+      <div class="empty">
+        No content added yet.
+      </div>
+    `;
+
+    return;
+  }
+
+  list.innerHTML = content.map((item, index) => {
+
+    const title =
+      item.title ||
+      item.name ||
+      `Content ${index + 1}`;
+
+    const description =
+      item.description ||
+      item.text ||
+      "";
+
+    return `
+      <article class="content-card reveal">
+
+        <span class="content-tag">
+          CONTENT
+        </span>
+
+        <h3>${esc(title)}</h3>
+
+        <p>${esc(description)}</p>
+
+      </article>
+    `;
+
+  }).join("");
+
+}
+
+
+/* ==============================
+   MEDIA
+================================ */
+
+let allMedia = [];
+
+
+function renderMedia(filter = "all") {
+
+  const list = document.getElementById("mediaList");
+
+  let media = [...allMedia];
+
+  if (filter !== "all") {
+    media = media.filter(
+      item => normalizeType(item) === filter
+    );
+  }
+
+  if (!media.length) {
+
+    list.innerHTML = `
+      <div class="empty">
+        No ${filter === "all" ? "" : filter} media available.
+      </div>
+    `;
+
+    return;
   }
 
 
-  if (phone) {
+  list.innerHTML = media.map((item, index) => {
 
-    html += `
+    const type = normalizeType(item);
 
-      <div class="contact-item">
+    const url = safeUrl(item.url || "");
 
-        <span class="contact-label">
-          WhatsApp / Phone
-        </span>
+    const title =
+      item.title ||
+      item.name ||
+      (
+        type === "image"
+          ? "Photo"
+          : type === "video"
+          ? "Video"
+          : "Notes"
+      );
 
-        <div class="contact-value">
+    const description =
+      item.description || "";
+
+    let preview = "";
+
+
+    /* PHOTO */
+
+    if (type === "image") {
+
+      preview = `
+        <div class="media-preview">
+          <img
+            src="${esc(url)}"
+            alt="${esc(title)}"
+            loading="lazy"
+          >
+        </div>
+      `;
+
+    }
+
+
+    /* VIDEO */
+
+    else if (type === "video") {
+
+      preview = `
+        <div class="media-preview video-preview">
+
+          <video
+            src="${esc(url)}"
+            controls
+            preload="metadata"
+          ></video>
+
+          <button
+            class="open-media"
+            data-url="${esc(url)}"
+            data-type="video"
+            data-title="${esc(title)}"
+          >
+            ▶ Open Video
+          </button>
+
+        </div>
+      `;
+
+    }
+
+
+    /* PDF / NOTES */
+
+    else {
+
+      preview = `
+        <div class="media-preview pdf-preview">
+
+          <div class="pdf-icon">📄</div>
+
+          <strong>PDF / NOTES</strong>
+
           <a
-            href="${esc(whatsappUrl(phone))}"
+            href="${esc(url)}"
             target="_blank"
             rel="noopener"
+            class="pdf-open"
           >
-            ${esc(phone)}
+            Open Notes →
           </a>
+
         </div>
-
-      </div>
-
-    `;
-  }
+      `;
+    }
 
 
-  if (instagram) {
+    return `
+      <article class="media-card reveal">
 
-    const ig =
-      instagramUrl(instagram);
+        ${preview}
 
-    html += `
+        <div class="media-info">
 
-      <div class="contact-item">
+          <span class="media-type">
+            ${
+              type === "image"
+                ? "PHOTO"
+                : type === "video"
+                ? "VIDEO"
+                : "NOTES"
+            }
+          </span>
 
-        <span class="contact-label">
-          Instagram
-        </span>
-
-        <div class="contact-value">
+          <h3>${esc(title)}</h3>
 
           ${
-            ig
+            description
+              ? `<p>${esc(description)}</p>`
+              : ""
+          }
+
+          ${
+            type === "image"
               ? `
-                <a
-                  href="${esc(ig)}"
-                  target="_blank"
-                  rel="noopener"
+                <button
+                  class="view-photo"
+                  data-url="${esc(url)}"
+                  data-title="${esc(title)}"
                 >
-                  ${esc(instagram)}
-                </a>
+                  View Photo →
+                </button>
               `
-              : esc(instagram)
+              : ""
           }
 
         </div>
 
-      </div>
-
+      </article>
     `;
-  }
+
+  }).join("");
 
 
-  if (!html) {
+  activateMediaButtons();
 
-    html = `
-
-      <div class="contact-empty">
-
-        <span>CONTACT</span>
-
-        <p>
-          Contact details will be added soon.
-        </p>
-
-      </div>
-
-    `;
-  }
-
-
-  contactCard.innerHTML = html;
 }
 
 
-/* =========================================
-   MEDIA
-========================================= */
+/* ==============================
+   MEDIA MODAL
+================================ */
 
-function renderMedia(media) {
+function activateMediaButtons() {
 
-  const mediaGrid =
-    document.getElementById(
-      "mediaGrid"
-    );
+  document.querySelectorAll(".view-photo").forEach(button => {
 
-  if (!mediaGrid) return;
+    button.addEventListener("click", () => {
 
+      openModal(
+        button.dataset.url,
+        "image",
+        button.dataset.title
+      );
 
-  if (
-    !Array.isArray(media) ||
-    media.length === 0
-  ) {
+    });
 
-    mediaGrid.innerHTML =
-      `<p class="muted">
-        No media uploaded yet.
-      </p>`;
-
-    return;
-  }
+  });
 
 
-  mediaGrid.innerHTML =
-    media.map(
-      (item, index) => {
+  document.querySelectorAll(".open-media").forEach(button => {
 
-        const url =
-          esc(item.url || "");
+    button.addEventListener("click", () => {
 
-        const title =
-          esc(item.title || "Untitled");
+      openModal(
+        button.dataset.url,
+        "video",
+        button.dataset.title
+      );
 
-        const description =
-          esc(item.description || "");
+    });
 
-        const type =
-          item.resourceType || "";
+  });
 
-        let preview = "";
-
-
-        /* IMAGE */
-
-        if (
-          type === "image" ||
-          /\.(jpg|jpeg|png|gif|webp|avif)$/i
-            .test(item.url || "")
-        ) {
-
-          preview = `
-
-            <div class="media-preview">
-
-              <img
-                src="${url}"
-                alt="${title}"
-                loading="lazy"
-              >
-
-            </div>
-
-          `;
-        }
-
-
-        /* VIDEO */
-
-        else if (
-          type === "video" ||
-          /\.(mp4|webm|mov|m4v)$/i
-            .test(item.url || "")
-        ) {
-
-          preview = `
-
-            <div class="media-preview">
-
-              <video
-                controls
-                preload="metadata"
-              >
-
-                <source
-                  src="${url}"
-                >
-
-                Your browser does not support video.
-
-              </video>
-
-            </div>
-
-          `;
-        }
-
-
-        /* PDF */
-
-        else {
-
-          preview = `
-
-            <div class="media-preview pdf-preview">
-
-              <div>
-                📄
-                <small>DOCUMENT</small>
-              </div>
-
-            </div>
-
-          `;
-        }
-
-
-        return `
-
-          <article
-            class="media-card reveal"
-            style="--delay:${index * 80}ms"
-          >
-
-            ${preview}
-
-            <div class="media-info">
-
-              <h3>
-                ${title}
-              </h3>
-
-              ${
-                description
-                  ? `<p>${description}</p>`
-                  : ""
-              }
-
-              <a
-                href="${url}"
-                target="_blank"
-                rel="noopener"
-              >
-                ${
-                  type === "video"
-                    ? "Open video →"
-                    : type === "image"
-                    ? "Open image →"
-                    : "Open document →"
-                }
-              </a>
-
-            </div>
-
-          </article>
-
-        `;
-      }
-    ).join("");
-
-
-  setupReveal();
 }
 
 
-/* =========================================
-   SCROLL REVEAL
-========================================= */
+function openModal(url, type, title) {
 
-function setupReveal() {
+  const modal =
+    document.getElementById("mediaModal");
+
+  const content =
+    document.getElementById("modalContent");
+
+  if (type === "image") {
+
+    content.innerHTML = `
+      <img
+        src="${esc(url)}"
+        alt="${esc(title)}"
+      >
+      <h3>${esc(title)}</h3>
+    `;
+
+  } else {
+
+    content.innerHTML = `
+      <video
+        src="${esc(url)}"
+        controls
+        autoplay
+      ></video>
+
+      <h3>${esc(title)}</h3>
+    `;
+
+  }
+
+  modal.classList.add("show");
+
+}
+
+
+function closeModal() {
+
+  const modal =
+    document.getElementById("mediaModal");
+
+  const content =
+    document.getElementById("modalContent");
+
+  modal.classList.remove("show");
+
+  content.innerHTML = "";
+
+}
+
+
+document
+  .getElementById("modalClose")
+  .addEventListener("click", closeModal);
+
+
+document
+  .getElementById("mediaModal")
+  .addEventListener("click", event => {
+
+    if (event.target.id === "mediaModal") {
+      closeModal();
+    }
+
+  });
+
+
+/* ESC KEY */
+
+document.addEventListener("keydown", event => {
+
+  if (event.key === "Escape") {
+    closeModal();
+  }
+
+});
+
+
+/* ==============================
+   MEDIA TABS
+================================ */
+
+document.querySelectorAll(".media-tab").forEach(tab => {
+
+  tab.addEventListener("click", () => {
+
+    document
+      .querySelectorAll(".media-tab")
+      .forEach(t => t.classList.remove("active"));
+
+    tab.classList.add("active");
+
+    renderMedia(tab.dataset.filter);
+
+  });
+
+});
+
+
+/* ==============================
+   CONTACT
+================================ */
+
+function renderContact(data) {
+
+  const contact = data.contact || {};
+
+  const email = String(
+    contact.email || ""
+  ).trim();
+
+  const phone = String(
+    contact.phone || ""
+  ).trim();
+
+  const whatsapp = String(
+    contact.whatsapp || phone
+  ).trim();
+
+  const instagram = String(
+    contact.instagram || ""
+  ).trim();
+
+
+  /* EMAIL */
+
+  if (email) {
+
+    const mail =
+      `mailto:${email}`;
+
+    document.getElementById("emailLink").textContent =
+      email;
+
+    document.getElementById("emailLink").href =
+      mail;
+
+    document.getElementById("contactEmailBtn").href =
+      mail;
+
+  }
+
+
+  /* PHONE */
+
+  if (phone) {
+
+    document.getElementById("phoneLink").textContent =
+      phone;
+
+    document.getElementById("phoneLink").href =
+      `tel:${phone.replace(/[^\d+]/g, "")}`;
+
+  }
+
+
+  /* WHATSAPP */
+
+  if (whatsapp) {
+
+    const digits =
+      whatsapp.replace(/\D/g, "");
+
+    if (digits) {
+
+      document.getElementById("whatsappLink").href =
+        `https://wa.me/${digits}`;
+
+    }
+
+  }
+
+
+  /* INSTAGRAM */
+
+  if (instagram) {
+
+    let instagramUrl = instagram;
+
+    if (!instagram.startsWith("http")) {
+
+      instagramUrl =
+        `https://instagram.com/${instagram.replace("@", "")}`;
+
+    }
+
+    document.getElementById("instagramLink").href =
+      safeUrl(instagramUrl);
+
+  }
+
+}
+
+
+/* ==============================
+   MOBILE MENU
+================================ */
+
+const menuBtn =
+  document.getElementById("menuBtn");
+
+const mobileMenu =
+  document.getElementById("mobileMenu");
+
+
+menuBtn.addEventListener("click", () => {
+
+  mobileMenu.classList.toggle("show");
+
+});
+
+
+mobileMenu.querySelectorAll("a").forEach(link => {
+
+  link.addEventListener("click", () => {
+
+    mobileMenu.classList.remove("show");
+
+  });
+
+});
+
+
+/* ==============================
+   ANIMATIONS
+================================ */
+
+function startAnimations() {
 
   const elements =
-    document.querySelectorAll(
-      ".reveal:not(.visible)"
-    );
-
-  if (!elements.length) return;
-
-
-  if (!("IntersectionObserver" in window)) {
-
-    elements.forEach(
-      el => el.classList.add("visible")
-    );
-
-    return;
-  }
-
+    document.querySelectorAll(".reveal");
 
   const observer =
     new IntersectionObserver(
       entries => {
 
-        entries.forEach(
-          entry => {
+        entries.forEach(entry => {
 
-            if (
-              entry.isIntersecting
-            ) {
+          if (entry.isIntersecting) {
 
-              const delay =
-                entry.target.style
-                  .getPropertyValue("--delay");
+            entry.target.classList.add("visible");
 
-              if (delay) {
+            observer.unobserve(entry.target);
 
-                entry.target.style.transitionDelay =
-                  delay;
-              }
-
-              entry.target.classList.add(
-                "visible"
-              );
-
-              observer.unobserve(
-                entry.target
-              );
-            }
           }
-        );
+
+        });
 
       },
       {
@@ -764,80 +692,84 @@ function setupReveal() {
     );
 
 
-  elements.forEach(
-    element =>
-      observer.observe(element)
-  );
+  elements.forEach(element => {
+
+    observer.observe(element);
+
+  });
+
 }
 
 
-/* =========================================
-   MOBILE MENU
-========================================= */
+/* ==============================
+   LOAD FIREBASE DATA
+================================ */
 
-const menuBtn =
-  document.getElementById(
-    "menuBtn"
-  );
+async function loadWebsite() {
 
-const mainNav =
-  document.getElementById(
-    "mainNav"
-  );
+  try {
+
+    const ref =
+      doc(db, "siteData", "main");
+
+    const snapshot =
+      await getDoc(ref);
 
 
-if (menuBtn && mainNav) {
+    if (!snapshot.exists()) {
 
-  menuBtn.addEventListener(
-    "click",
-    () => {
+      console.log("No siteData/main found.");
 
-      const open =
-        mainNav.classList.toggle(
-          "mobile-open"
-        );
+      return;
 
-      menuBtn.classList.toggle(
-        "active",
-        open
-      );
-
-      menuBtn.setAttribute(
-        "aria-expanded",
-        String(open)
-      );
     }
-  );
 
 
-  mainNav
-    .querySelectorAll("a")
-    .forEach(link => {
+    const data =
+      snapshot.data();
 
-      link.addEventListener(
-        "click",
-        () => {
 
-          mainNav.classList.remove(
-            "mobile-open"
-          );
+    renderAbout(data);
+    renderServices(data);
+    renderContent(data);
 
-          menuBtn.classList.remove(
-            "active"
-          );
+    allMedia =
+      Array.isArray(data.media)
+        ? data.media
+        : [];
 
-          menuBtn.setAttribute(
-            "aria-expanded",
-            "false"
-          );
-        }
-      );
-    });
+    document.getElementById("mediaCount").textContent =
+      allMedia.length;
+
+    renderMedia("all");
+
+    renderContact(data);
+
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+
+
+    /* Start animation after dynamic content */
+
+    document
+      .querySelectorAll(".reveal")
+      .forEach(el => {
+        el.classList.add("ready");
+      });
+
+    startAnimations();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("servicesList").innerHTML =
+      `<div class="error">Unable to load website data.</div>`;
+
+  }
+
 }
 
 
-/* =========================================
-   START
-========================================= */
-
-render();
+loadWebsite();
