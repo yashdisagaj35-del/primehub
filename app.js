@@ -9,811 +9,677 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 
+/* ==============================
+   FIREBASE
+================================ */
+
 const firebaseConfig = {
-
-  apiKey:"AIzaSyCqZVROZOMbmHA3-cXZ8ql5LFnKkTr9jzk",
-
-  authDomain:"primehub-12dde.firebaseapp.com",
-
-  projectId:"primehub-12dde",
-
-  storageBucket:"primehub-12dde.firebasestorage.app",
-
-  messagingSenderId:"1081645394839",
-
-  appId:"1:1081645394839:web:796cc1c3de6d1ce201b2d2",
-
-  measurementId:"G-878ZB4S1LP"
-
+  apiKey: "AIzaSyBCx8_8R-fGh9CiM4-0Fk57dQnRfXe74YSY",
+  authDomain: "primehub-12dde.firebaseapp.com",
+  projectId: "primehub-12dde",
+  storageBucket: "primehub-12dde.firebasestorage.app",
+  messagingSenderId: "1081645394839",
+  appId: "1:1081645394839:web:796cc1c3de6d1ce201b2d2",
+  measurementId: "G-878ZB4S1LP"
 };
 
-
-const app=initializeApp(firebaseConfig);
-
-const db=getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 
-/* DATA */
+/* ==============================
+   HELPERS
+================================ */
 
-let siteData={
-
-  about:{
-    title:"About Me",
-    text:""
-  },
-
-  contact:{
-    email:"",
-    phone:"",
-    instagram:""
-  },
-
-  services:[],
-
-  content:[],
-
-  media:[]
-
-};
+function esc(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
 
-/* LOAD DATA */
+function safeUrl(value = "") {
 
-async function loadSite(){
+  try {
+    const url = new URL(value);
 
-  try{
-
-    const snap=await getDoc(
-      doc(db,"siteData","main")
-    );
-
-    if(snap.exists()){
-
-      const d=snap.data();
-
-      siteData={
-
-        about:
-          typeof d.about==="object"
-          ?d.about
-          :{
-            title:"About Me",
-            text:d.about||""
-          },
-
-        contact:d.contact||{},
-
-        services:Array.isArray(d.services)
-          ?d.services
-          :[],
-
-        content:Array.isArray(d.content)
-          ?d.content
-          :[],
-
-        media:Array.isArray(d.media)
-          ?d.media
-          :[]
-
-      };
-
+    if (
+      url.protocol === "https:" ||
+      url.protocol === "http:"
+    ) {
+      return url.href;
     }
 
+  } catch {}
 
-    renderAll();
-
-  }
-
-  catch(error){
-
-    console.error(
-      "Firebase error:",
-      error
-    );
-
-  }
-
+  return "#";
 }
 
 
-/* RENDER */
+function normalizeType(item) {
 
-function renderAll(){
+  const type = String(
+    item.type ||
+    item.resourceType ||
+    ""
+  ).toLowerCase();
 
-  renderAbout();
+  const url = String(item.url || "").toLowerCase();
 
-  renderServices();
-
-  renderContent();
-
-  renderMedia();
-
-  renderContact();
-
-  setupMenu();
-
-  setupReveal();
-
-  const year=document.getElementById("year");
-
-  if(year){
-
-    year.textContent=
-      new Date().getFullYear();
-
+  if (
+    type === "image" ||
+    type === "photo" ||
+    /\.(jpg|jpeg|png|gif|webp|avif)$/i.test(url)
+  ) {
+    return "image";
   }
 
+  if (
+    type === "video" ||
+    /\.(mp4|webm|mov|mkv)$/i.test(url)
+  ) {
+    return "video";
+  }
+
+  return "pdf";
 }
 
 
-/* ABOUT */
+/* ==============================
+   ABOUT
+================================ */
 
-function renderAbout(){
+function renderAbout(data) {
 
-  const title=
-    document.getElementById("aboutTitle");
+  const box = document.getElementById("aboutBox");
 
-  const text=
-    document.getElementById("aboutText");
+  const title = data.about?.title || "Creative. Digital. Professional.";
 
+  const text =
+    data.about?.text ||
+    "PrimeHub is a creative digital platform focused on professional work, content and media.";
 
-  if(title){
+  box.innerHTML = `
+    <div class="about-number">PRIMEHUB</div>
 
-    title.textContent=
-      siteData.about?.title||
-      "About Me";
-
-  }
-
-
-  if(text){
-
-    text.textContent=
-      siteData.about?.text||
-      "";
-
-  }
-
+    <div>
+      <h3>${esc(title)}</h3>
+      <p>${esc(text)}</p>
+    </div>
+  `;
 }
 
 
-/* SERVICES */
+/* ==============================
+   SERVICES
+================================ */
 
-function renderServices(){
+function renderServices(data) {
 
-  const box=
-    document.getElementById("servicesList");
+  const list = document.getElementById("servicesList");
 
-  if(!box)return;
+  const services = Array.isArray(data.services)
+    ? data.services
+    : [];
 
-  box.innerHTML="";
+  document.getElementById("serviceCount").textContent =
+    services.length;
 
+  if (!services.length) {
 
-  siteData.services.forEach(service=>{
-
-    const div=
-      document.createElement("div");
-
-    div.className="service-card";
-
-
-    div.innerHTML=`
-
-      <h3>
-        ${escapeHtml(service.title||"")}
-      </h3>
-
-      <p>
-        ${escapeHtml(
-          service.description||
-          service.text||
-          ""
-        )}
-      </p>
-
+    list.innerHTML = `
+      <div class="empty">
+        No services added yet.
+      </div>
     `;
 
+    return;
+  }
 
-    box.appendChild(div);
+  list.innerHTML = services.map((item, index) => {
 
-  });
+    const title = item.title || item.name || "Service";
+    const description = item.description || "";
 
-}
+    return `
+      <article class="service-card reveal">
 
-
-/* CONTENT */
-
-function renderContent(){
-
-  const box=
-    document.getElementById("contentList");
-
-  if(!box)return;
-
-  box.innerHTML="";
-
-
-  siteData.content.forEach(item=>{
-
-    const div=
-      document.createElement("div");
-
-    div.className="content-card";
-
-
-    div.innerHTML=`
-
-      <h3>
-        ${escapeHtml(item.title||"")}
-      </h3>
-
-      <p>
-        ${escapeHtml(
-          item.text||
-          item.description||
-          ""
-        )}
-      </p>
-
-    `;
-
-
-    box.appendChild(div);
-
-  });
-
-}
-
-
-/* MEDIA */
-
-function renderMedia(){
-
-  const box=
-    document.getElementById("mediaGrid");
-
-  if(!box)return;
-
-
-  box.innerHTML="";
-
-
-  siteData.media.forEach((media,index)=>{
-
-    const type=
-      getMediaType(media);
-
-
-    const card=
-      document.createElement("article");
-
-    card.className=
-      "media-card";
-
-
-    let visual="";
-
-
-    if(type==="image"){
-
-      visual=`
-
-        <div class="media-thumb image-thumb">
-
-          <img
-            src="${media.url}"
-            alt="${escapeHtml(media.title||"Photo")}"
-            loading="lazy"
-          >
-
+        <div class="card-number">
+          ${String(index + 1).padStart(2, "0")}
         </div>
 
+        <h3>${esc(title)}</h3>
+
+        <p>${esc(description)}</p>
+
+        <span class="card-arrow">↗</span>
+
+      </article>
+    `;
+
+  }).join("");
+
+}
+
+
+/* ==============================
+   CONTENT
+================================ */
+
+function renderContent(data) {
+
+  const list = document.getElementById("contentList");
+
+  const content = Array.isArray(data.content)
+    ? data.content
+    : [];
+
+  document.getElementById("contentCount").textContent =
+    content.length;
+
+  if (!content.length) {
+
+    list.innerHTML = `
+      <div class="empty">
+        No content added yet.
+      </div>
+    `;
+
+    return;
+  }
+
+  list.innerHTML = content.map((item, index) => {
+
+    const title =
+      item.title ||
+      item.name ||
+      `Content ${index + 1}`;
+
+    const description =
+      item.description ||
+      item.text ||
+      "";
+
+    return `
+      <article class="content-card reveal">
+
+        <span class="content-tag">
+          CONTENT
+        </span>
+
+        <h3>${esc(title)}</h3>
+
+        <p>${esc(description)}</p>
+
+      </article>
+    `;
+
+  }).join("");
+
+}
+
+
+/* ==============================
+   MEDIA
+================================ */
+
+let allMedia = [];
+
+
+function renderMedia(filter = "all") {
+
+  const list = document.getElementById("mediaList");
+
+  let media = [...allMedia];
+
+  if (filter !== "all") {
+    media = media.filter(
+      item => normalizeType(item) === filter
+    );
+  }
+
+  if (!media.length) {
+
+    list.innerHTML = `
+      <div class="empty">
+        No ${filter === "all" ? "" : filter} media available.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  list.innerHTML = media.map((item, index) => {
+
+    const type = normalizeType(item);
+
+    const url = safeUrl(item.url || "");
+
+    const title =
+      item.title ||
+      item.name ||
+      (
+        type === "image"
+          ? "Photo"
+          : type === "video"
+          ? "Video"
+          : "Notes"
+      );
+
+    const description =
+      item.description || "";
+
+    let preview = "";
+
+
+    /* PHOTO */
+
+    if (type === "image") {
+
+      preview = `
+        <div class="media-preview">
+          <img
+            src="${esc(url)}"
+            alt="${esc(title)}"
+            loading="lazy"
+          >
+        </div>
       `;
 
     }
 
-    else if(type==="video"){
 
-      visual=`
+    /* VIDEO */
 
-        <div class="media-thumb video-thumb">
+    else if (type === "video") {
+
+      preview = `
+        <div class="media-preview video-preview">
 
           <video
-            src="${media.url}"
+            src="${esc(url)}"
+            controls
             preload="metadata"
           ></video>
 
-          <span class="play-icon">
-            ▶
-          </span>
+          <button
+            class="open-media"
+            data-url="${esc(url)}"
+            data-type="video"
+            data-title="${esc(title)}"
+          >
+            ▶ Open Video
+          </button>
 
         </div>
-
       `;
 
     }
 
-    else{
 
-      visual=`
+    /* PDF / NOTES */
 
-        <div class="media-thumb pdf-thumb">
+    else {
 
-          <span>📄</span>
+      preview = `
+        <div class="media-preview pdf-preview">
+
+          <div class="pdf-icon">📄</div>
 
           <strong>PDF / NOTES</strong>
 
+          <a
+            href="${esc(url)}"
+            target="_blank"
+            rel="noopener"
+            class="pdf-open"
+          >
+            Open Notes →
+          </a>
+
         </div>
-
       `;
-
     }
 
 
-    card.innerHTML=`
+    return `
+      <article class="media-card reveal">
 
-      ${visual}
+        ${preview}
 
-      <div class="media-info">
+        <div class="media-info">
 
-        <h3>
-          ${escapeHtml(
-            media.title||
-            "Untitled"
-          )}
-        </h3>
+          <span class="media-type">
+            ${
+              type === "image"
+                ? "PHOTO"
+                : type === "video"
+                ? "VIDEO"
+                : "NOTES"
+            }
+          </span>
 
-        <p>
-          ${escapeHtml(
-            media.description||
-            ""
-          )}
-        </p>
+          <h3>${esc(title)}</h3>
 
-        <button
-          class="media-open-btn"
-          data-media-index="${index}">
-          Open
-        </button>
+          ${
+            description
+              ? `<p>${esc(description)}</p>`
+              : ""
+          }
 
-      </div>
+          ${
+            type === "image"
+              ? `
+                <button
+                  class="view-photo"
+                  data-url="${esc(url)}"
+                  data-title="${esc(title)}"
+                >
+                  View Photo →
+                </button>
+              `
+              : ""
+          }
 
+        </div>
+
+      </article>
     `;
 
-
-    box.appendChild(card);
-
-  });
+  }).join("");
 
 
-  document
-    .querySelectorAll(
-      "[data-media-index]"
-    )
-    .forEach(button=>{
+  activateMediaButtons();
 
-      button.onclick=()=>{
+}
 
-        const index=
-          Number(
-            button.dataset.mediaIndex
-          );
 
-        openMedia(
-          siteData.media[index]
-        );
+/* ==============================
+   MEDIA MODAL
+================================ */
 
-      };
+function activateMediaButtons() {
+
+  document.querySelectorAll(".view-photo").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      openModal(
+        button.dataset.url,
+        "image",
+        button.dataset.title
+      );
 
     });
 
-
-  setupMediaFilters();
-
-}
+  });
 
 
-/* MEDIA TYPE */
+  document.querySelectorAll(".open-media").forEach(button => {
 
-function getMediaType(media){
+    button.addEventListener("click", () => {
 
-  if(media.resourceType){
-
-    return media.resourceType;
-
-  }
-
-
-  if(media.type==="photo"){
-
-    return "image";
-
-  }
-
-
-  if(media.type==="video"){
-
-    return "video";
-
-  }
-
-
-  if(
-    media.format==="pdf"||
-    media.url?.toLowerCase().includes(".pdf")
-  ){
-
-    return "raw";
-
-  }
-
-
-  return "image";
-
-}
-
-
-/* MEDIA FILTERS */
-
-function setupMediaFilters(){
-
-  const buttons=
-    document.querySelectorAll(
-      "[data-media-filter]"
-    );
-
-  if(!buttons.length)return;
-
-
-  buttons.forEach(button=>{
-
-    button.onclick=()=>{
-
-      buttons.forEach(b=>
-        b.classList.remove("active")
+      openModal(
+        button.dataset.url,
+        "video",
+        button.dataset.title
       );
 
-      button.classList.add("active");
-
-
-      const filter=
-        button.dataset.mediaFilter;
-
-
-      document
-        .querySelectorAll(".media-card")
-        .forEach((card,index)=>{
-
-          const media=
-            siteData.media[index];
-
-          const type=
-            getMediaType(media);
-
-
-          let show=true;
-
-
-          if(
-            filter!=="all"&&
-            filter!==type
-          ){
-
-            show=false;
-
-          }
-
-
-          card.style.display=
-            show
-            ?""
-            :"none";
-
-        });
-
-    };
+    });
 
   });
 
 }
 
 
-/* OPEN MEDIA */
+function openModal(url, type, title) {
 
-function openMedia(media){
-
-  const modal=
+  const modal =
     document.getElementById("mediaModal");
 
-  if(!modal)return;
+  const content =
+    document.getElementById("modalContent");
 
+  if (type === "image") {
 
-  const body=
-    document.getElementById("mediaModalBody");
-
-  const title=
-    document.getElementById("mediaModalTitle");
-
-  const download=
-    document.getElementById("mediaDownload");
-
-
-  const type=
-    getMediaType(media);
-
-
-  title.textContent=
-    media.title||
-    "Media";
-
-
-  body.innerHTML="";
-
-
-  if(type==="image"){
-
-    body.innerHTML=`
-
+    content.innerHTML = `
       <img
-        src="${media.url}"
-        class="modal-image"
-        alt=""
+        src="${esc(url)}"
+        alt="${esc(title)}"
       >
-
+      <h3>${esc(title)}</h3>
     `;
 
-    download.textContent=
-      "⬇ Download Photo";
+  } else {
 
-  }
-
-  else if(type==="video"){
-
-    body.innerHTML=`
-
+    content.innerHTML = `
       <video
-        src="${media.url}"
-        class="modal-video"
+        src="${esc(url)}"
         controls
         autoplay
       ></video>
 
+      <h3>${esc(title)}</h3>
     `;
 
-    download.textContent=
-      "⬇ Download Video";
-
   }
-
-  else{
-
-    body.innerHTML=`
-
-      <iframe
-        src="${media.url}"
-        class="modal-pdf">
-      </iframe>
-
-    `;
-
-    download.textContent=
-      "⬇ Download PDF";
-
-  }
-
-
-  download.href=
-    makeDownloadUrl(media.url);
-
-
-  download.target="_blank";
-
 
   modal.classList.add("show");
 
 }
 
 
-/* CLOUDINARY DOWNLOAD URL */
+function closeModal() {
 
-function makeDownloadUrl(url){
+  const modal =
+    document.getElementById("mediaModal");
 
-  if(!url)return "#";
+  const content =
+    document.getElementById("modalContent");
 
+  modal.classList.remove("show");
 
-  /*
-    Cloudinary files can use fl_attachment
-    for browser download.
-  */
-
-  if(
-    url.includes("res.cloudinary.com")&&
-    url.includes("/upload/")
-  ){
-
-    return url.replace(
-      "/upload/",
-      "/upload/fl_attachment/"
-    );
-
-  }
-
-
-  return url;
+  content.innerHTML = "";
 
 }
 
 
-/* CONTACT */
-
-function renderContact(){
-
-  const email=
-    document.getElementById(
-      "contactEmail"
-    );
-
-  const phone=
-    document.getElementById(
-      "contactPhone"
-    );
-
-  const instagram=
-    document.getElementById(
-      "contactInstagram"
-    );
+document
+  .getElementById("modalClose")
+  .addEventListener("click", closeModal);
 
 
-  if(email){
+document
+  .getElementById("mediaModal")
+  .addEventListener("click", event => {
 
-    const value=
-      siteData.contact?.email||
-      "";
+    if (event.target.id === "mediaModal") {
+      closeModal();
+    }
 
-    email.href=
-      value
-      ?"mailto:"+value
-      :"#";
+  });
+
+
+/* ESC KEY */
+
+document.addEventListener("keydown", event => {
+
+  if (event.key === "Escape") {
+    closeModal();
+  }
+
+});
+
+
+/* ==============================
+   MEDIA TABS
+================================ */
+
+document.querySelectorAll(".media-tab").forEach(tab => {
+
+  tab.addEventListener("click", () => {
+
+    document
+      .querySelectorAll(".media-tab")
+      .forEach(t => t.classList.remove("active"));
+
+    tab.classList.add("active");
+
+    renderMedia(tab.dataset.filter);
+
+  });
+
+});
+
+
+/* ==============================
+   CONTACT
+================================ */
+
+function renderContact(data) {
+
+  const contact = data.contact || {};
+
+  const email = String(
+    contact.email || ""
+  ).trim();
+
+  const phone = String(
+    contact.phone || ""
+  ).trim();
+
+  const whatsapp = String(
+    contact.whatsapp || phone
+  ).trim();
+
+  const instagram = String(
+    contact.instagram || ""
+  ).trim();
+
+
+  /* EMAIL */
+
+  if (email) {
+
+    const mail =
+      `mailto:${email}`;
+
+    document.getElementById("emailLink").textContent =
+      email;
+
+    document.getElementById("emailLink").href =
+      mail;
+
+    document.getElementById("contactEmailBtn").href =
+      mail;
 
   }
 
 
-  if(phone){
+  /* PHONE */
 
-    const value=
-      siteData.contact?.phone||
-      "";
+  if (phone) {
 
-    phone.href=
-      value
-      ?"https://wa.me/"+
-       value.replace(/\D/g,"")
-      :"#";
+    document.getElementById("phoneLink").textContent =
+      phone;
+
+    document.getElementById("phoneLink").href =
+      `tel:${phone.replace(/[^\d+]/g, "")}`;
 
   }
 
 
-  if(instagram){
+  /* WHATSAPP */
 
-    instagram.href=
-      siteData.contact?.instagram||
-      "#";
+  if (whatsapp) {
 
-  }
+    const digits =
+      whatsapp.replace(/\D/g, "");
 
-}
+    if (digits) {
 
-
-/* MENU */
-
-function setupMenu(){
-
-  const toggle=
-    document.querySelector(
-      ".menu-toggle"
-    );
-
-  const menu=
-    document.querySelector(
-      ".mobile-menu"
-    );
-
-
-  if(
-    !toggle||
-    !menu
-  )return;
-
-
-  toggle.onclick=()=>{
-
-    menu.classList.toggle(
-      "open"
-    );
-
-  };
-
-}
-
-
-/* MODAL CLOSE */
-
-const modal=
-  document.getElementById(
-    "mediaModal"
-  );
-
-
-if(modal){
-
-  const close=
-    document.getElementById(
-      "mediaModalClose"
-    );
-
-
-  close.onclick=()=>{
-
-    modal.classList.remove(
-      "show"
-    );
-
-  };
-
-
-  modal.onclick=e=>{
-
-    if(e.target===modal){
-
-      modal.classList.remove(
-        "show"
-      );
+      document.getElementById("whatsappLink").href =
+        `https://wa.me/${digits}`;
 
     }
 
-  };
+  }
+
+
+  /* INSTAGRAM */
+
+  if (instagram) {
+
+    let instagramUrl = instagram;
+
+    if (!instagram.startsWith("http")) {
+
+      instagramUrl =
+        `https://instagram.com/${instagram.replace("@", "")}`;
+
+    }
+
+    document.getElementById("instagramLink").href =
+      safeUrl(instagramUrl);
+
+  }
 
 }
 
 
-/* REVEAL */
+/* ==============================
+   MOBILE MENU
+================================ */
 
-function setupReveal(){
+const menuBtn =
+  document.getElementById("menuBtn");
 
-  const items=
-    document.querySelectorAll(
-      ".reveal"
-    );
-
-
-  if(
-    !("IntersectionObserver" in window)
-  ){
-
-    items.forEach(i=>
-      i.classList.add("visible")
-    );
-
-    return;
-
-  }
+const mobileMenu =
+  document.getElementById("mobileMenu");
 
 
-  const observer=
+menuBtn.addEventListener("click", () => {
+
+  mobileMenu.classList.toggle("show");
+
+});
+
+
+mobileMenu.querySelectorAll("a").forEach(link => {
+
+  link.addEventListener("click", () => {
+
+    mobileMenu.classList.remove("show");
+
+  });
+
+});
+
+
+/* ==============================
+   ANIMATIONS
+================================ */
+
+function startAnimations() {
+
+  const elements =
+    document.querySelectorAll(".reveal");
+
+  const observer =
     new IntersectionObserver(
-      entries=>{
+      entries => {
 
-        entries.forEach(entry=>{
+        entries.forEach(entry => {
 
-          if(entry.isIntersecting){
+          if (entry.isIntersecting) {
 
-            entry.target.classList.add(
-              "visible"
-            );
+            entry.target.classList.add("visible");
 
-            observer.unobserve(
-              entry.target
-            );
+            observer.unobserve(entry.target);
 
           }
 
@@ -821,30 +687,89 @@ function setupReveal(){
 
       },
       {
-        threshold:.12
+        threshold: 0.12
       }
     );
 
 
-  items.forEach(item=>
-    observer.observe(item)
-  );
+  elements.forEach(element => {
+
+    observer.observe(element);
+
+  });
 
 }
 
 
-/* ESCAPE HTML */
+/* ==============================
+   LOAD FIREBASE DATA
+================================ */
 
-function escapeHtml(value){
+async function loadWebsite() {
 
-  return String(value??"")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+  try {
+
+    const ref =
+      doc(db, "siteData", "main");
+
+    const snapshot =
+      await getDoc(ref);
+
+
+    if (!snapshot.exists()) {
+
+      console.log("No siteData/main found.");
+
+      return;
+
+    }
+
+
+    const data =
+      snapshot.data();
+
+
+    renderAbout(data);
+    renderServices(data);
+    renderContent(data);
+
+    allMedia =
+      Array.isArray(data.media)
+        ? data.media
+        : [];
+
+    document.getElementById("mediaCount").textContent =
+      allMedia.length;
+
+    renderMedia("all");
+
+    renderContact(data);
+
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+
+
+    /* Start animation after dynamic content */
+
+    document
+      .querySelectorAll(".reveal")
+      .forEach(el => {
+        el.classList.add("ready");
+      });
+
+    startAnimations();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("servicesList").innerHTML =
+      `<div class="error">Unable to load website data.</div>`;
+
+  }
 
 }
 
 
-loadSite();
+loadWebsite();
